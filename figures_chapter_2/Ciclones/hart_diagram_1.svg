@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="294.80762mm"
+   height="195.48367mm"
+   viewBox="0 0 1114.2335 738.83595"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25)"
+   sodipodi:docname="hart_diagram_1.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="0.64943182"
+     inkscape:cx="570.49869"
+     inkscape:cy="445.77428"
+     inkscape:window-width="1920"
+     inkscape:window-height="942"
+     inkscape:window-x="0"
+     inkscape:window-y="25"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1">
+    <linearGradient
+       id="linearGradient14"
+       inkscape:collect="always">
+      <stop
+         style="stop-color:#0042b7;stop-opacity:1;"
+         offset="0"
+         id="stop13" />
+      <stop
+         style="stop-color:#ffffff;stop-opacity:0;"
+         offset="1"
+         id="stop14" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient12"
+       inkscape:collect="always">
+      <stop
+         style="stop-color:#b600b7;stop-opacity:1;"
+         offset="0"
+         id="stop11" />
+      <stop
+         style="stop-color:#ffffff;stop-opacity:0;"
+         offset="1"
+         id="stop12" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient10"
+       inkscape:collect="always">
+      <stop
+         style="stop-color:#b70000;stop-opacity:1;"
+         offset="0"
+         id="stop9" />
+      <stop
+         style="stop-color:#ffffff;stop-opacity:0;"
+         offset="1"
+         id="stop10" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient12"
+       id="linearGradient6"
+       x1="0.61942273"
+       y1="-2.2012291"
+       x2="559.56958"
+       y2="368.8924"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.88522405,0,0,0.85673095,122.08292,5.4801765)" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient10"
+       id="linearGradient7"
+       gradientUnits="userSpaceOnUse"
+       x1="0.61942273"
+       y1="-2.2012291"
+       x2="559.56958"
+       y2="368.8924"
+       gradientTransform="matrix(0.88522405,0,0,0.85673095,-1113.5203,5.4801744)" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient14"
+       id="linearGradient8"
+       gradientUnits="userSpaceOnUse"
+       x1="0.61942273"
+       y1="-2.2012291"
+       x2="559.56958"
+       y2="368.8924"
+       gradientTransform="matrix(0.88522405,0,0,0.85673095,122.08292,-638.86741)" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient12"
+       id="linearGradient15"
+       gradientUnits="userSpaceOnUse"
+       x1="0.61942273"
+       y1="-2.2012291"
+       x2="559.56958"
+       y2="368.8924"
+       gradientTransform="matrix(0.88522405,0,0,0.85673095,-1113.5203,-638.8674)" />
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-2.1592302,-0.87838507)">
+    <text
+       xml:space="preserve"
+       style="font-weight:bold;font-size:32.3516px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';text-align:center;text-anchor:middle;fill:#000000;fill-opacity:0.670588;stroke:none;stroke-width:4.16843;stroke-linejoin:round"
+       x="617.14325"
+       y="707.95929"
+       id="text15-8-4"><tspan
+         sodipodi:role="line"
+         id="tspan15-5-7"
+         x="617.14325"
+         y="707.95929"
+         style="stroke-width:4.16843">-V<tspan
+   style="font-size:21.0285px;baseline-shift:super;stroke-width:4.16843"
+   id="tspan17">L</tspan><tspan
+   style="font-size:21.0285px;baseline-shift:sub;stroke-width:4.16843"
+   id="tspan18">T</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-weight:bold;font-size:26.4695px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';text-align:center;text-anchor:middle;fill:#000000;fill-opacity:0.670588;stroke:none;stroke-width:4.16843;stroke-linejoin:round"
+       x="370.02582"
+       y="661.99176"
+       id="text15-8-4-5"><tspan
+         sodipodi:role="line"
+         id="tspan15-5-7-0"
+         x="370.02582"
+         y="661.99176"
+         style="stroke-width:4.16843">Lower Cold Core</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-weight:bold;font-size:26.4695px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';text-align:center;text-anchor:middle;fill:#000000;fill-opacity:0.670588;stroke:none;stroke-width:4.16843;stroke-linejoin:round"
+       x="864.2074"
+       y="666.12061"
+       id="text15-8-4-5-4"><tspan
+         sodipodi:role="line"
+         id="tspan15-5-7-0-8"
+         x="864.2074"
+         y="666.12061"
+         style="stroke-width:4.16843">Lower Warm Core</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-weight:bold;font-size:32.3516px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';text-align:center;text-anchor:middle;fill:#000000;fill-opacity:0.670588;stroke:none;stroke-width:4.16843;stroke-linejoin:round"
+       x="-323.81363"
+       y="50.682613"
+       id="text15-8-4-0"
+       transform="rotate(-91.10983)"><tspan
+         sodipodi:role="line"
+         id="tspan15-5-7-4"
+         x="-323.81363"
+         y="50.682613"
+         style="stroke-width:4.16843">-V<tspan
+   style="font-size:21.0285px;baseline-shift:super;stroke-width:4.16843"
+   id="tspan19">U</tspan><tspan
+   style="font-size:21.0285px;baseline-shift:sub;stroke-width:4.16843"
+   id="tspan18-5">T</tspan></tspan></text>
+    <g
+       id="g22"
+       transform="matrix(1.1028962,0,0,1.1028962,-117.47326,-0.64132292)">
+      <text
+         xml:space="preserve"
+         style="font-weight:bold;font-size:24px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';text-align:center;text-anchor:middle;fill:#000000;fill-opacity:0.670588;stroke:none;stroke-width:3.77953;stroke-linejoin:round"
+         x="-439.87146"
+         y="197.68428"
+         id="text15-8-4-0-8"
+         transform="rotate(-91.10983)"><tspan
+           sodipodi:role="line"
+           x="-439.87146"
+           y="197.68428"
+           id="tspan20">Upper Cold Core</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-weight:bold;font-size:24px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';text-align:center;text-anchor:middle;fill:#000000;fill-opacity:0.670588;stroke:none;stroke-width:3.77953;stroke-linejoin:round"
+         x="-154.05795"
+         y="202.85297"
+         id="text15-8-4-0-8-2"
+         transform="rotate(-91.10983)"><tspan
+           sodipodi:role="line"
+           x="-154.05795"
+           y="202.85297"
+           id="tspan20-5">Upper Warm Core</tspan></text>
+    </g>
+    <rect
+       style="opacity:0.670644;fill:url(#linearGradient15);fill-opacity:1;stroke-width:3.29145;stroke-linejoin:round"
+       id="rect1-1"
+       width="493.43304"
+       height="316.60822"
+       x="-1111.6089"
+       y="-638.11487"
+       transform="scale(-1)" />
+    <rect
+       style="opacity:0.670644;fill:url(#linearGradient6);stroke-width:3.29145;stroke-linejoin:round"
+       id="rect1"
+       width="493.43304"
+       height="316.60822"
+       x="123.99432"
+       y="6.2327166" />
+    <rect
+       style="opacity:0.670644;fill:url(#linearGradient8);fill-opacity:1;stroke-width:3.29145;stroke-linejoin:round"
+       id="rect1-5"
+       width="493.43304"
+       height="316.60822"
+       x="123.99432"
+       y="-638.11487"
+       transform="scale(1,-1)" />
+    <rect
+       style="opacity:0.670644;fill:url(#linearGradient7);fill-opacity:1;stroke-width:3.29145;stroke-linejoin:round"
+       id="rect1-6"
+       width="493.43304"
+       height="316.60822"
+       x="-1111.6089"
+       y="6.2327166"
+       transform="scale(-1,1)" />
+    <text
+       xml:space="preserve"
+       style="font-weight:bold;font-size:29.6495px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';text-align:center;text-anchor:middle;fill:#000000;fill-opacity:0.670588;stroke:none;stroke-width:3.82027;stroke-linejoin:round"
+       x="370.52988"
+       y="175.5468"
+       id="text15-8-48"><tspan
+         sodipodi:role="line"
+         id="tspan15-5-6"
+         x="370.52988"
+         y="175.5468"
+         style="stroke-width:3.82027">Shallow cold core</tspan></text>
+    <g
+       id="g26"
+       transform="matrix(1.1028962,0,0,1.1028962,-126.33772,22.776143)">
+      <text
+         xml:space="preserve"
+         style="font-weight:bold;font-size:26.8833px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';text-align:center;text-anchor:middle;fill:#000000;fill-opacity:0.670588;stroke:none;stroke-width:3.46385;stroke-linejoin:round"
+         x="898.05621"
+         y="116.5528"
+         id="text15-8-7-2"><tspan
+           sodipodi:role="line"
+           id="tspan15-5-1-8"
+           x="898.05621"
+           y="116.5528"
+           style="stroke-width:3.46385">Deep warm core</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:24.4394px;font-family:sans-serif;-inkscape-font-specification:sans-serif;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:0.670588;stroke:none;stroke-width:3.46385;stroke-linejoin:round"
+         x="899.25311"
+         y="155.14606"
+         id="text15"><tspan
+           sodipodi:role="line"
+           id="tspan15"
+           x="899.25311"
+           y="155.14606"
+           style="stroke-width:3.46385">Tropical cyclones</tspan></text>
+    </g>
+    <g
+       id="g25"
+       transform="matrix(1.1028962,0,0,1.1028962,-114.38034,-0.64132292)">
+      <text
+         xml:space="preserve"
+         style="font-weight:bold;font-size:26.8833px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';text-align:center;text-anchor:middle;fill:#000000;fill-opacity:0.670588;stroke:none;stroke-width:3.46385;stroke-linejoin:round"
+         x="887.74603"
+         y="405.35062"
+         id="text15-8-7"><tspan
+           sodipodi:role="line"
+           id="tspan15-5-1"
+           x="887.74603"
+           y="405.35062"
+           style="stroke-width:3.46385">Shallow warm core</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:24.4394px;font-family:sans-serif;-inkscape-font-specification:sans-serif;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:0.670588;stroke:none;stroke-width:3.46385;stroke-linejoin:round"
+         x="887.61176"
+         y="444.72678"
+         id="text15-0"><tspan
+           sodipodi:role="line"
+           id="tspan15-9"
+           x="887.61176"
+           y="444.72678"
+           style="stroke-width:3.46385">Subtropical cyclones</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:24.4394px;font-family:sans-serif;-inkscape-font-specification:sans-serif;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:0.670588;stroke:none;stroke-width:3.46385;stroke-linejoin:round"
+         x="887.86237"
+         y="485.95972"
+         id="text15-7"><tspan
+           sodipodi:role="line"
+           id="tspan15-2"
+           x="887.86237"
+           y="485.95972"
+           style="stroke-width:3.46385">Warm Seclusions</tspan></text>
+    </g>
+    <g
+       id="g24"
+       transform="matrix(1.1028962,0,0,1.1028962,-108.91151,0.4615688)">
+      <text
+         xml:space="preserve"
+         style="font-weight:bold;font-size:26.8833px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';text-align:center;text-anchor:middle;fill:#000000;fill-opacity:0.670588;stroke:none;stroke-width:3.46385;stroke-linejoin:round"
+         x="434.17963"
+         y="400.04099"
+         id="text15-8"><tspan
+           sodipodi:role="line"
+           id="tspan15-5"
+           x="434.17963"
+           y="400.04099"
+           style="stroke-width:3.46385">Deep cold core</tspan></text>
+      <g
+         id="g1"
+         transform="matrix(0.91647612,0,0,0.91647612,-311.48314,242.84391)">
+        <text
+           xml:space="preserve"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:26.6667px;font-family:sans-serif;-inkscape-font-specification:sans-serif;text-align:center;text-anchor:middle;opacity:1;fill:#000000;fill-opacity:0.670588;stroke:none;stroke-width:3.77953;stroke-linejoin:round"
+           x="814.1767"
+           y="217.99126"
+           id="text15-1"><tspan
+             sodipodi:role="line"
+             id="tspan15-8"
+             x="814.1767"
+             y="217.99126">Extratropical cyclones</tspan></text>
+      </g>
+      <g
+         id="g2"
+         transform="matrix(0.91647612,0,0,0.91647612,-311.48314,284.93898)">
+        <text
+           xml:space="preserve"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:26.6667px;font-family:sans-serif;-inkscape-font-specification:sans-serif;text-align:center;text-anchor:middle;opacity:1;fill:#000000;fill-opacity:0.670588;stroke:none;stroke-width:3.77953;stroke-linejoin:round"
+           x="814.1767"
+           y="217.99126"
+           id="text15-1-8"><tspan
+             sodipodi:role="line"
+             id="tspan15-8-5"
+             x="814.1767"
+             y="217.99126">Ocluded extratropical cyclones</tspan></text>
+      </g>
+    </g>
+  </g>
+</svg>
