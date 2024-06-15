@@ -9,7 +9,7 @@ import matplotlib.ticker as mticker
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
 # Configuration
-INFILES_DIRECTORY = '/home/daniloceano/Documents/Programs_and_scripts/SWSA-cyclones_energetic-analysis/periods_species_statistics/70W-no-continental/track_density'
+INFILES_DIRECTORY = '../../Programs_and_scripts/SWSA-cyclones_energetic-analysis/periods_species_statistics/70W-no-continental/track_density'
 OUTPUT_DIRECTORY = '../figures_chapter_4/track_density_regions/'
 PHASES = ['incipient', 'intensification', 'mature', 'decay',
           'intensification 2', 'mature 2', 'decay 2']
@@ -83,7 +83,7 @@ def plot_combined_density(ax, density, phase, color):
     return cf
 
 def plot_density_for_region(region):
-    fig, axes = plt.subplots(nrows=len(PHASES), ncols=len(SEASONS), figsize=(16, 20), subplot_kw={'projection': proj})
+    fig, axes = plt.subplots(nrows=len(PHASES), ncols=len(SEASONS), figsize=(10, 20), subplot_kw={'projection': proj})
     axes = axes.flatten()
     
     for i, phase in enumerate(PHASES):
@@ -105,7 +105,7 @@ def plot_density_for_region(region):
     colorbar = plt.colorbar(cf, cax=cbar_axes, orientation='horizontal')
     colorbar.ax.tick_params(labelsize=12)
 
-    plt.subplots_adjust(wspace=0.2, hspace=0.3)
+    plt.subplots_adjust(hspace=0.3)
     fname = os.path.join(OUTPUT_DIRECTORY, f'{region}_density_map.png')
     plt.savefig(fname, bbox_inches='tight')
     plt.close(fig)
