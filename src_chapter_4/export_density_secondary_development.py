@@ -1,12 +1,12 @@
 # **************************************************************************** #
 #                                                                              #
 #                                                         :::      ::::::::    #
-#    export_density_all.py                              :+:      :+:    :+:    #
+#    export_density_secondary_development.py            :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
 #    By: daniloceano <danilo.oceano@gmail.com>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/08/09 12:48:17 by Danilo            #+#    #+#              #
-#    Updated: 2024/06/15 11:25:53 by daniloceano      ###   ########.fr        #
+#    Updated: 2024/06/15 11:47:23 by daniloceano      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -243,7 +243,7 @@ def main():
     print(f"Region: {region}")
 
     periods_directory = f'{DATABASE_DIRECTORY}/{analysis_type}_{region}/'
-    output_directory = f'../results_chapter_4/track_density'
+    output_directory = f'../results_chapter_4/track_density_secondary_development/'
     os.makedirs(output_directory, exist_ok=True)
 
     # Get all tracks for SAt
@@ -266,6 +266,12 @@ def main():
     filtered_tracks['period'] = filtered_tracks.set_index(['track_id', 'date']).index.map(period_mapping)
 
     filtered_tracks['date'] = pd.to_datetime(filtered_tracks['date'])
+
+    # Filter the DataFrame to include only track_ids that have all required phases
+    phases = ['incipient', 'intensification', 'mature', 'decay', 'intensification 2', 'mature 2', 'decay 2']
+    grouped = filtered_tracks.groupby('track_id')['period'].apply(lambda x: set(phases).issubset(set(x)))
+    valid_track_ids = grouped[grouped].index
+    filtered_tracks = filtered_tracks[filtered_tracks['track_id'].isin(valid_track_ids)].reset_index(drop=True)
 
     seasons = ['JJA', 'DJF', False]
 
