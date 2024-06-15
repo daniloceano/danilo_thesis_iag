@@ -6,7 +6,7 @@
 #    By: daniloceano <danilo.oceano@gmail.com>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/06/13 09:22:31 by daniloceano       #+#    #+#              #
-#    Updated: 2024/06/15 10:32:45 by daniloceano      ###   ########.fr        #
+#    Updated: 2024/06/15 18:28:14 by daniloceano      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -85,9 +85,13 @@ def plot_density(fig, ax, phase, density, label):
         'intensification': [0.1, 1, 2, 5, 8, 10, 15, 20, 30, 40, 50, 60, 80, 100],
         'mature': [0.1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 16, 18, 20],
         'decay': [0.1, 1, 2, 3, 5, 8, 10, 13, 15, 18, 20, 25, 30, 35, 40],
-        'default': [0.1, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7],
+        'intensification 2': [0.1, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 2, 2.5, 3, 3.5, 4, 4.5],
+        'mature 2': [0.1, 0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4, 1.6, 1.8, 2],
+        'decay 2': [0.1, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 5, 6, 7],
+        'residual': [0.1, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5],
     }
-    levels = levels_dict.get(phase, levels_dict['default'])
+    
+    levels = levels_dict.get(phase)
 
     norm = mpl.colors.BoundaryNorm(levels, cmap.N)
     lon, lat = density.lon, density.lat
@@ -182,8 +186,43 @@ def plot_secondary_development():
         plt.close(fig)
         print(f'Density map saved in {fname}')
 
+def plot_residual_phase_aggregate():
+    fig, ax = plt.subplots(figsize=(12, 7), subplot_kw={'projection': proj})
+    combined_density = None
+
+    for region in ["ARG", "LA-PLATA", "SE-BR"]:
+        for season in SEASONS:
+            season_str = f"_{season}" if season else ""
+            infile = os.path.join(INFILES_DIRECTORY, f'{region}_track_density{season_str}.nc')
+            
+            if os.path.exists(infile):
+                ds = xr.open_dataset(infile)
+                if combined_density is None:
+                    combined_density = ds['residual'].copy()
+                else:
+                    combined_density += ds['residual']
+            else:
+                print(f"File not found: {infile}")
+
+    if combined_density is not None:
+        levels, cf = plot_density(fig, ax, 'residual', combined_density, '(I)')
+
+        cbar_axes = fig.add_axes([0.15, 0.05, 0.7, 0.04])
+        ticks = np.round(levels, decimals=2)
+        colorbar = plt.colorbar(cf, cax=cbar_axes, ticks=ticks, format='%g', orientation='horizontal')
+        colorbar.ax.tick_params(labelsize=12)
+
+        plt.subplots_adjust(wspace=0.15)
+        fname = os.path.join(OUTPUT_DIRECTORY, f'density_map_residual_aggregate.png')
+        plt.savefig(fname, bbox_inches='tight')
+        plt.close(fig)
+        print(f'Density map saved in {fname}')
+    else:
+        print("No data found for the residual phase across all regions and seasons.")
+
 # Main Execution
 if __name__ == "__main__":
     os.makedirs(OUTPUT_DIRECTORY, exist_ok=True)
     plot_each_phase()
     plot_secondary_development()
+    plot_residual_phase_aggregate()
