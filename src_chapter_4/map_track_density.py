@@ -6,7 +6,7 @@
 #    By: daniloceano <danilo.oceano@gmail.com>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/06/13 09:22:31 by daniloceano       #+#    #+#              #
-#    Updated: 2024/06/14 13:05:31 by daniloceano      ###   ########.fr        #
+#    Updated: 2024/06/15 10:32:45 by daniloceano      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,8 +21,8 @@ import matplotlib.ticker as mticker
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
 # Configuration
-# INFILES_DIRECTORY = '/Users/danilocoutodesouza/Documents/Programs_and_scripts/SWSA-cyclones_energetic-analysis/periods_species_statistics/70W-no-continental/track_density'
-INFILES_DIRECTORY = '/home/daniloceano/Documents/Programs_and_scripts/SWSA-cyclones_energetic-analysis/periods_species_statistics/70W-no-continental/track_density'
+INFILES_DIRECTORY = '/Users/danilocoutodesouza/Documents/Programs_and_scripts/SWSA-cyclones_energetic-analysis/periods_species_statistics/70W-no-continental/track_density'
+# INFILES_DIRECTORY = '/home/daniloceano/Documents/Programs_and_scripts/SWSA-cyclones_energetic-analysis/periods_species_statistics/70W-no-continental/track_density'
 OUTPUT_DIRECTORY = '../figures_chapter_4/track_density/'
 PHASES = ['incipient', 'intensification', 'mature', 'decay',
           'intensification 2', 'mature 2', 'decay 2', 'residual']
@@ -85,7 +85,7 @@ def plot_density(fig, ax, phase, density, label):
         'intensification': [0.1, 1, 2, 5, 8, 10, 15, 20, 30, 40, 50, 60, 80, 100],
         'mature': [0.1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 16, 18, 20],
         'decay': [0.1, 1, 2, 3, 5, 8, 10, 13, 15, 18, 20, 25, 30, 35, 40],
-        'default': [0.1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 16, 18, 20]
+        'default': [0.1, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7],
     }
     levels = levels_dict.get(phase, levels_dict['default'])
 
@@ -162,15 +162,11 @@ def plot_secondary_development():
         for i, phase in enumerate(secondary_phases):
             ax = fig.add_subplot(2, 2, i+1, projection=proj)
 
-            season_str = f"_{season}" if season else ""
-            infile = os.path.join(INFILES_DIRECTORY, f'SAt_track_density{season_str}.nc')
-            
-            if not os.path.exists(infile):
-                print(f"File not found: {infile}")
+            density = load_and_sum_densities(phase, season)
+            if density is None:
+                print(f"No data found for phase: {phase} in season: {season}")
                 continue
 
-            ds = xr.open_dataset(infile)
-            density = ds[phase]
             label = LABELS[i]
             levels, cf = plot_density(fig, ax, phase, density, label)
 
@@ -181,7 +177,7 @@ def plot_secondary_development():
                 colorbar.ax.tick_params(labelsize=12)
 
         plt.subplots_adjust(wspace=0.15)
-        fname = os.path.join(OUTPUT_DIRECTORY, f'density_map_secondary_development{season_str}.png')
+        fname = os.path.join(OUTPUT_DIRECTORY, f'density_map_secondary_development_{season}.png')
         plt.savefig(fname, bbox_inches='tight')
         plt.close(fig)
         print(f'Density map saved in {fname}')
