@@ -9,6 +9,7 @@ import matplotlib.patches as mpatches
 
 # Configuration
 INFILES_DIRECTORY = '../../Programs_and_scripts/SWSA-cyclones_energetic-analysis/periods_species_statistics/70W-no-continental/track_density'
+SECONDARY_INFILES_DIRECTORY = '../results_chapter_4/track_density_secondary_development/'
 OUTPUT_DIRECTORY = '../figures_chapter_4/track_density_regions/'
 PHASES = ['incipient', 'intensification', 'mature', 'decay', 'intensification 2', 'mature 2', 'decay 2']
 REGIONS = ["ARG", "LA-PLATA", "SE-BR"]
@@ -25,11 +26,11 @@ COLOR_PHASES = {
     'decay 2': '#386641',
 }
 
-LINESTYLES = {
-    'LA-PLATA': ':',
-    'SE-BR': '--',
-    'ARG': '-',
-    'default': '-'
+LINE_STYLES = {
+    'ARG': 'solid',
+    'LA-PLATA': 'dashed',
+    'SE-BR': 'dashdot',
+    'default': 'solid'
 }
 
 datacrs = ccrs.PlateCarree()
@@ -74,55 +75,86 @@ def plot_density_contours(ax, density, linestyle, color):
     ax.contour(density.lon, density.lat, norm_density, levels=np.linspace(0.8, 1.2, 2), colors=[color], linestyles=linestyle,
                 transform=datacrs, linewidths=4)
 
-def plot_density_for_region(region, combined_density=None):
-    fig, ax = plt.subplots(figsize=(10, 10), subplot_kw={'projection': proj})
-    ax.set_extent([-80, 50, -15, -90], crs=datacrs)
+def plot_density_for_region(region, combined_density=None, ax=None):
+    if ax is None:
+        fig, ax = plt.subplots(figsize=(10, 10), subplot_kw={'projection': proj})
+        ax.set_extent([-80, 50, -15, -90], crs=datacrs)
+        new_figure = True
+    else:
+        new_figure = False
 
     legend_handles = []
-
-    if combined_densities is not None:
-        linestyle = LINESTYLES['default']
-    else:
-        linestyle = LINESTYLES[region]
     
     for phase in PHASES:
-        if region == AGGREGATE_LABEL and combined_density is not None:
+        if phase in ['intensification 2', 'mature 2', 'decay 2']:
+            infile_directory = SECONDARY_INFILES_DIRECTORY
+        else:
+            infile_directory = INFILES_DIRECTORY
+        
+        if combined_density is not None:
+            linestyle = LINE_STYLES['default']
             plot_density_contours(ax, combined_density[phase], linestyle, COLOR_PHASES[phase])
         else:
-            infile = os.path.join(INFILES_DIRECTORY, f'{region}_track_density.nc')
+            infile = os.path.join(infile_directory, f'{region}_track_density.nc')
             if not os.path.exists(infile):
                 print(f"File not found: {infile}")
                 continue
             ds = xr.open_dataset(infile)
             density = ds[phase]
+            linestyle = LINE_STYLES['default']
             plot_density_contours(ax, density, linestyle, COLOR_PHASES[phase])
         legend_handles.append(mpatches.Patch(color=COLOR_PHASES[phase], label=phase))
 
     ax.coastlines()
     gridlines(ax)
     
-    ax.legend(handles=legend_handles, loc='upper right')
-    
-    fname = os.path.join(OUTPUT_DIRECTORY, f'density_map_{region}.png')
+    if new_figure:
+        # Remove duplicate entries in legend
+        unique_handles = list({handle.get_label(): handle for handle in legend_handles}.values())
+        ax.legend(handles=unique_handles, loc='upper right')
+        fname = os.path.join(OUTPUT_DIRECTORY, f'density_map_{region}.png')
+        plt.savefig(fname, bbox_inches='tight')
+        plt.close(fig)
+        print(f'Density map for region {region} saved in {fname}')
+    else:
+        return legend_handles
+
+def plot_aggregate_density():
+    fig, ax = plt.subplots(figsize=(10, 10), subplot_kw={'projection': proj})
+    ax.set_extent([-80, 50, -15, -90], crs=datacrs)
+
+    legend_handles = []
+
+    for region in REGIONS:
+        combined_density = {phase: None for phase in PHASES}
+        for phase in PHASES:
+            if phase in ['intensification 2', 'mature 2', 'decay 2']:
+                infile_directory = SECONDARY_INFILES_DIRECTORY
+            else:
+                infile_directory = INFILES_DIRECTORY
+            infile = os.path.join(infile_directory, f'{region}_track_density.nc')
+            if os.path.exists(infile):
+                ds = xr.open_dataset(infile)
+                density = ds[phase]
+                if combined_density[phase] is None:
+                    combined_density[phase] = density
+                else:
+                    combined_density[phase] += density
+        legend_handles += plot_density_for_region(region, combined_density=combined_density, ax=ax)
+
+    # Remove duplicate entries in legend
+    unique_handles = list({handle.get_label(): handle for handle in legend_handles}.values())
+    ax.legend(handles=unique_handles, loc='upper right')
+    fname = os.path.join(OUTPUT_DIRECTORY, f'density_map_{AGGREGATE_LABEL}.png')
     plt.savefig(fname, bbox_inches='tight')
     plt.close(fig)
-    print(f'Density map for region {region} saved in {fname}')
+    print(f'Density map for {AGGREGATE_LABEL} saved in {fname}')
 
 # Main Execution
 if __name__ == "__main__":
     os.makedirs(OUTPUT_DIRECTORY, exist_ok=True)
     
-    combined_densities = {phase: None for phase in PHASES}
     for region in REGIONS:
         plot_density_for_region(region)
-        for phase in PHASES:
-            infile = os.path.join(INFILES_DIRECTORY, f'{region}_track_density.nc')
-            if os.path.exists(infile):
-                ds = xr.open_dataset(infile)
-                density = ds[phase]
-                if combined_densities[phase] is None:
-                    combined_densities[phase] = density
-                else:
-                    combined_densities[phase] += density
 
-    plot_density_for_region(AGGREGATE_LABEL, combined_densities)
+    plot_aggregate_density()
