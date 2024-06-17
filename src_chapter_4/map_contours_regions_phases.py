@@ -25,6 +25,13 @@ COLOR_PHASES = {
     'decay 2': '#386641',
 }
 
+LINESTYLES = {
+    'LA-PLATA': ':',
+    'SE-BR': '--',
+    'ARG': '-',
+    'default': '-'
+}
+
 datacrs = ccrs.PlateCarree()
 proj = ccrs.AlbersEqualArea(central_longitude=-30, central_latitude=-35, standard_parallels=(-20.0, -60.0))
 
@@ -62,20 +69,25 @@ def normalize_density(density):
     max_val = density.max()
     return (density - min_val) / (max_val - min_val)
 
-def plot_density_contours(ax, density, phase, color):
+def plot_density_contours(ax, density, linestyle, color):
     norm_density = normalize_density(density)
-    ax.contour(density.lon, density.lat, norm_density, levels=np.linspace(0.8, 1.2, 2), colors=[color], transform=datacrs, linewidths=4)
+    ax.contour(density.lon, density.lat, norm_density, levels=np.linspace(0.8, 1.2, 2), colors=[color], linestyles=linestyle,
+                transform=datacrs, linewidths=4)
 
 def plot_density_for_region(region, combined_density=None):
     fig, ax = plt.subplots(figsize=(10, 10), subplot_kw={'projection': proj})
-    ax.set_title(region, fontsize=16)
     ax.set_extent([-80, 50, -15, -90], crs=datacrs)
 
     legend_handles = []
+
+    if combined_densities is not None:
+        linestyle = LINESTYLES['default']
+    else:
+        linestyle = LINESTYLES[region]
     
     for phase in PHASES:
         if region == AGGREGATE_LABEL and combined_density is not None:
-            plot_density_contours(ax, combined_density[phase], phase, COLOR_PHASES[phase])
+            plot_density_contours(ax, combined_density[phase], linestyle, COLOR_PHASES[phase])
         else:
             infile = os.path.join(INFILES_DIRECTORY, f'{region}_track_density.nc')
             if not os.path.exists(infile):
@@ -83,7 +95,7 @@ def plot_density_for_region(region, combined_density=None):
                 continue
             ds = xr.open_dataset(infile)
             density = ds[phase]
-            plot_density_contours(ax, density, phase, COLOR_PHASES[phase])
+            plot_density_contours(ax, density, linestyle, COLOR_PHASES[phase])
         legend_handles.append(mpatches.Patch(color=COLOR_PHASES[phase], label=phase))
 
     ax.coastlines()
