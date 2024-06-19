@@ -5,10 +5,11 @@ from concurrent.futures import ProcessPoolExecutor, as_completed
 
 # Define paths
 PATH = '../../Programs_and_scripts/energetic_patterns_cyclones_south_atlantic'
+PATH = '../../energetic_patterns_cyclones_south_atlantic'
 base_path = f'{PATH}/csv_database_energy_by_periods'
 tracks_dir = f'{PATH}/tracks_SAt'
 track_ids_path = f'{PATH}/csv_track_ids_by_region_season/all_track_ids.csv'
-output_directory = f'../figures_chapter_5/correlation/'
+output_directory = f'../results_chapter_5/correlation/'
 merged_data_path = f'{output_directory}/merged_data.csv'
 
 if not os.path.exists(output_directory):
