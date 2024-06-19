@@ -5,6 +5,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # Define paths
 PATH = '../../Programs_and_scripts/energetic_patterns_cyclones_south_atlantic'
+PATH = '../../energetic_patterns_cyclones_south_atlantic'
 base_path = f'{PATH}/csv_database_energy_by_periods'
 tracks_dir = f'{PATH}/tracks_SAt'
 track_ids_path = f'{PATH}/csv_track_ids_by_region_season/all_track_ids.csv'
@@ -43,20 +44,26 @@ def read_life_cycles(base_path):
 
 def read_tracks(tracks_dir, relevant_track_ids):
     """
-    Reads all track CSV files in the specified directory and filters relevant tracks.
+    Reads all track CSV files in the specified directory and filters relevant tracks before concatenation.
     """
-    track_data = pd.DataFrame()
+    track_data = []
     file_paths = [os.path.join(tracks_dir, filename) for filename in os.listdir(tracks_dir) if filename.endswith('.csv')]
 
+    def read_and_filter(file_path):
+        df = read_csv_file(file_path)
+        if df is not None:
+            return df[df['track_id'].isin(relevant_track_ids)]
+        return pd.DataFrame()
+
     with ThreadPoolExecutor() as executor:
-        futures = {executor.submit(read_csv_file, file_path): file_path for file_path in file_paths}
+        futures = {executor.submit(read_and_filter, file_path): file_path for file_path in file_paths}
 
-        for future in tqdm(as_completed(futures), total=len(futures), desc="Reading track files"):
-            df = future.result()
-            if df is not None:
-                track_data = pd.concat([track_data, df], ignore_index=True)
+        for future in tqdm(as_completed(futures), total=len(futures), desc="Reading and filtering track files"):
+            filtered_df = future.result()
+            if not filtered_df.empty:
+                track_data.append(filtered_df)
 
-    return track_data[track_data['track_id'].isin(relevant_track_ids)]
+    return pd.concat(track_data, ignore_index=True) if track_data else pd.DataFrame()
 
 def merge_data(systems_energetics, track_data):
     merged_data = []
