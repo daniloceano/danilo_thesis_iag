@@ -1,16 +1,15 @@
 import os
 import pandas as pd
 from tqdm import tqdm
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ProcessPoolExecutor, as_completed
 
 # Define paths
 PATH = '../../Programs_and_scripts/energetic_patterns_cyclones_south_atlantic'
-PATH = '../../energetic_patterns_cyclones_south_atlantic'
 base_path = f'{PATH}/csv_database_energy_by_periods'
 tracks_dir = f'{PATH}/tracks_SAt'
 track_ids_path = f'{PATH}/csv_track_ids_by_region_season/all_track_ids.csv'
 output_directory = f'../figures_chapter_5/correlation/'
-merged_data_path = f'results_chapter_5/merged_data.csv'
+merged_data_path = f'{output_directory}/merged_data.csv'
 
 if not os.path.exists(output_directory):
     os.makedirs(output_directory)
@@ -30,7 +29,7 @@ def read_life_cycles(base_path):
     systems_energetics = {}
     file_paths = [os.path.join(base_path, filename) for filename in os.listdir(base_path) if filename.endswith('.csv')]
 
-    with ThreadPoolExecutor() as executor:
+    with ProcessPoolExecutor(max_workers=56) as executor:
         futures = {executor.submit(read_csv_file, file_path): file_path for file_path in file_paths}
 
         for future in tqdm(as_completed(futures), total=len(futures), desc="Reading CSV files"):
@@ -42,6 +41,13 @@ def read_life_cycles(base_path):
 
     return systems_energetics
 
+def read_and_filter_tracks(file_path, relevant_track_ids):
+    df = read_csv_file(file_path)
+    df.columns = ['track_id', 'date', 'lon', 'lat', ' vor']
+    if df is not None:
+        return df[df['track_id'].isin(relevant_track_ids)]
+    return pd.DataFrame()
+
 def read_tracks(tracks_dir, relevant_track_ids):
     """
     Reads all track CSV files in the specified directory and filters relevant tracks before concatenation.
@@ -49,14 +55,8 @@ def read_tracks(tracks_dir, relevant_track_ids):
     track_data = []
     file_paths = [os.path.join(tracks_dir, filename) for filename in os.listdir(tracks_dir) if filename.endswith('.csv')]
 
-    def read_and_filter(file_path):
-        df = read_csv_file(file_path)
-        if df is not None:
-            return df[df['track_id'].isin(relevant_track_ids)]
-        return pd.DataFrame()
-
-    with ThreadPoolExecutor() as executor:
-        futures = {executor.submit(read_and_filter, file_path): file_path for file_path in file_paths}
+    with ProcessPoolExecutor(max_workers=56) as executor:
+        futures = {executor.submit(read_and_filter_tracks, file_path, relevant_track_ids): file_path for file_path in file_paths}
 
         for future in tqdm(as_completed(futures), total=len(futures), desc="Reading and filtering track files"):
             filtered_df = future.result()
