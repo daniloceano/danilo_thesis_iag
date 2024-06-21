@@ -1,9 +1,12 @@
 import pandas as pd
 import os
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from tqdm import tqdm
 
 # Define the paths
 base_path = '../../Programs_and_scripts/LEC_Results_energetic-patterns/'
 track_base_path = '../../Programs_and_scripts/SWSA-cyclones_energetic-analysis/raw_data/SAt/'
+output_path = '../results_chapter_5/database_tracks/'
 
 # Function to label phases based on periods
 def label_phases(row, periods_df):
@@ -52,15 +55,21 @@ def process_cyclone(cyclone_dir):
         merged_data['phase'] = merged_data.apply(label_phases, periods_df=periods, axis=1)
         
         # Save the final merged data to a new CSV file
-        output_file = f'/mnt/data/merged_cyclone_data_{track_id}.csv'
+        output_file = os.path.join(output_path, f'track_periods_energetics_{track_id}.csv')
         merged_data.to_csv(output_file, index=False)
-        
-        print(f"Processed cyclone {track_id} successfully and saved to {output_file}")
-        
+                
     except Exception as e:
         print(f"Error processing cyclone {track_id}: {e}")
 
-# Iterate over all cyclone directories in the base path
-for cyclone_dir in os.listdir(base_path):
-    if os.path.isdir(os.path.join(base_path, cyclone_dir)):
-        process_cyclone(cyclone_dir)
+# Parallelize the processing using ThreadPoolExecutor
+os.makedirs(output_path, exist_ok=True)
+cyclone_dirs = [d for d in os.listdir(base_path) if os.path.isdir(os.path.join(base_path, d))]
+
+with ThreadPoolExecutor(max_workers=4) as executor:
+    futures = {executor.submit(process_cyclone, cyclone_dir): cyclone_dir for cyclone_dir in cyclone_dirs}
+    for future in tqdm(as_completed(futures), total=len(futures), desc="Processing Cyclones"):
+        cyclone_dir = futures[future]
+        try:
+            future.result()
+        except Exception as e:
+            print(f"Error processing {cyclone_dir}: {e}")
