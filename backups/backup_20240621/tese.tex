@@ -1,0 +1,71 @@
+%\documentclass{iagtese} 		% declaração da classe iagtese com
+						% padrões de formatação.
+						%	
+\documentclass{iagtese_en}	% declaração da classe iagtese em
+						% ingles. Para escrever a tese em 
+						% ingles, descomente esta linha e 
+						% comente a linha anterior.
+						%				%	
+%\hypercolor				% links coloridos para a versao
+						% on line da tese. Para usar esta
+						% opcao descomente esta linha.
+						% 	
+\begin{document}			% início do documento
+						% 				
+\input{tex/0.0.capa}			% arquivo para inserir a capa
+						%
+\pagestyle{empty}			% padrão de formatação para parte
+						% inicial do texto
+						%
+\maketitle					% 
+						%
+\Dedicatoria				%
+\input{tex/0.1.dedicatoria}		%
+						% componentes iniciais do trabalho
+\Agradecimentos			%
+\input{tex/0.2.agradecimentos}	% caso não queira adicionar algum
+						% deles, simplesmente remova as
+						% linhas correspondentes.
+						%
+\Epigrafe					%  
+\input{tex/0.3.epigrafe}		%
+						%
+\Resumo					%
+\input{tex/0.4.resumo}		%
+						%
+\Abstract					%
+\input{tex/0.5.abstract}		%
+						%
+\listoffigures 				% lista de figuras (opcional)
+\listoftables 				% lista de tabelas (opcional)
+\tableofcontents 			% sumário
+						%
+\cleardoublepage			%
+\pagestyle{fancy}			% formatação para corpo do texto
+						%
+\input{tex/1.introduction}		%
+\input{tex/2.theoretical_background}    	% inserir os capítulos do seu
+\input{tex/3.methods} 
+\input{tex/4.life cycle}
+\input{tex/5.energetic_patterns}		% trabalho.
+\input{tex/6.modelling}
+\input{tex/7.conclusions}
+       						%
+						%
+%\begin{thebibliography}{99}	% referências bibliográficas (dê
+%\input{tex/bibliografia.tex} 	% preferência ao bibTeX).
+%\end{thebibliography}		% caso não use o bibTeX, remova os
+						% comentarios das três linhas
+						% e comente a linha \bibliography
+						%
+\bibliography{tex/bibliografia}	% bibliografia utilizando bibTeX,
+						% referente ao arquivo
+						% bibliografia.bib na pasta tex/
+						%
+\begin{apendice}			% inicio do ambiente apendice
+\input{tex/apendicea.tex}		% texto referente ao apendice
+\end{apendice}				% fim do ambiente apendice. caso
+						% nao utilize apendice, remova as
+						% 3 linhas de comando.
+						%
+\end{document}				% fim do arquivo
