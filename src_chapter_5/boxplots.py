@@ -6,7 +6,7 @@
 #    By: daniloceano <danilo.oceano@gmail.com>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/02 17:31:28 by daniloceano       #+#    #+#              #
-#    Updated: 2024/06/17 15:06:46 by daniloceano      ###   ########.fr        #
+#    Updated: 2024/06/22 16:35:20 by daniloceano      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -120,6 +120,7 @@ def plot_box_plots_by_phase(systems_energetics, group_name, terms_prefix, output
     Generates a figure for each group of terms with subplots for each term, and each subplot contains multiple box plots for each phase.
     """
     all_data = pd.concat(systems_energetics.values(), ignore_index=True)
+    all_data = all_data[all_data['phase'] != 'Total']
     terms = [col for col in all_data.columns if col.startswith(tuple(terms_prefix))]
 
     n_terms = len(terms)
@@ -130,12 +131,13 @@ def plot_box_plots_by_phase(systems_energetics, group_name, terms_prefix, output
 
     for idx, (ax, term) in enumerate(zip(axes.flatten(), terms)):
         sns.boxplot(x='phase', y=term, data=all_data, palette=COLOR_PHASES.values(), hue='phase',
-                    order=['Total', 'incipient', 'intensification', 'mature', 'decay', 'intensification 2', 'mature 2', 'decay 2'], ax=ax)
+                    order=['incipient', 'intensification', 'mature', 'decay', 'intensification 2', 'mature 2', 'decay 2'], ax=ax)
         ax.axhline(y=0, color='k', linestyle='--', alpha=0.8, linewidth=0.5)
         ax.set_title(term, fontsize=TITLE_FONT_SIZE)
         ax.tick_params(axis='both', which='major', labelsize=TICK_FONT_SIZE)
+        ax.tick_params(axis='x', which='major', labelrotation=45)
         # Add letter label
-        ax.text(0.02, 0.95, f'({chr(65 + idx)})', transform=ax.transAxes, fontsize=TITLE_FONT_SIZE, fontweight='bold')
+        ax.text(0.02, 0.93, f'({chr(65 + idx)})', transform=ax.transAxes, fontsize=TITLE_FONT_SIZE, fontweight='bold')
 
     plt.tight_layout()
     plot_filename = f'box_plot_{group_name.replace(" ", "_").replace("/", "_")}.png'
