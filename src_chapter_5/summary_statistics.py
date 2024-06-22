@@ -6,7 +6,7 @@
 #    By: daniloceano <danilo.oceano@gmail.com>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/02 17:31:28 by daniloceano       #+#    #+#              #
-#    Updated: 2024/06/17 16:15:40 by daniloceano      ###   ########.fr        #
+#    Updated: 2024/06/22 10:30:16 by daniloceano      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,7 @@ import pandas as pd
 
 PATH = '/Users/danilocoutodesouza/Documents/Programs_and_scripts/energetic_patterns_cyclones_south_atlantic'
 base_path = f'{PATH}/csv_database_energy_by_periods'
-output_directory = f'../figures_chapter_5/summary_statistics/'
+output_directory = f'../results_chapter_5/summary_statistics/'
 
 def read_life_cycles(base_path):
     """
@@ -89,7 +89,7 @@ def compute_summary_statistics(systems_energetics, output_directory):
     with open(os.path.join(output_directory, 'summary_statistics.tex'), 'w') as f:
         f.write(latex_table)
 
-    print(f"Summary statistics saved to {os.path.join(output_directory, 'summary_statistics.tex')}")
+    print(f"Summary statistics saved to {os.path.join(output_directory, 'summary_statistics_total.tex')}")
 
 if __name__ == "__main__":
     systems_energetics = read_life_cycles(base_path)
