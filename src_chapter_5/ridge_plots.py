@@ -6,7 +6,7 @@
 #    By: daniloceano <danilo.oceano@gmail.com>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/29 14:56:47 by daniloceano       #+#    #+#              #
-#    Updated: 2024/06/22 17:19:40 by daniloceano      ###   ########.fr        #
+#    Updated: 2024/06/22 20:08:04 by daniloceano      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,6 +16,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 import numpy as np
+from matplotlib.ticker import AutoMinorLocator, MaxNLocator
 
 PATH = '/Users/danilocoutodesouza/Documents/Programs_and_scripts/energetic_patterns_cyclones_south_atlantic'
 base_path = f'{PATH}/csv_database_energy_by_periods'
@@ -30,6 +31,17 @@ COLOR_PHASES = {
     'decay': '#a6b38f',
     'decay 2': '#4a7b4f',
 }
+
+PHASE_MAPPING = {
+    'incipient': 'Ic',
+    'intensification': 'It',
+    'intensification 2': 'It2',
+    'mature': 'M',
+    'mature 2': 'M2',
+    'decay': 'D',
+    'decay 2': 'D2',
+}
+
 
 LABEL_FONT_SIZE = 14
 TICK_FONT_SIZE = 12
@@ -86,7 +98,7 @@ def plot_ridge_group_facet(systems_energetics, group_name, terms_prefix, output_
         g.map_dataframe(sns.kdeplot, x="Value", color='black')
         def label(x, color, label):
             ax = plt.gca()
-            ax.text(0, .2, label, color='black', fontsize=13, ha="left", va="center", transform=ax.transAxes)
+            ax.text(0, .2, PHASE_MAPPING[label], color='black', fontsize=24, ha="left", va="center", transform=ax.transAxes)
         g.map(label, "Phase")
 
         for ax, phase in zip(g.axes.flatten(), order):
@@ -95,10 +107,17 @@ def plot_ridge_group_facet(systems_energetics, group_name, terms_prefix, output_
             median_value = phase_values.median()
             ax.axvline(mean_value, ymax=0.8, color='k', linestyle='-')
             ax.axvline(median_value, ymax=0.8, color='k', linestyle='--')
+            if group_name != 'Energy Terms':
+                ax.axvline(0, color='k', ymax=0.8, linestyle='-', alpha=0.5, linewidth=0.5) 
+            ax.xaxis.set_minor_locator(AutoMinorLocator())
+            ax.tick_params(axis='x', which='minor', length=4, color='gray', size=16)
+            ax.tick_params(axis='x', which='both', labelsize=16)
+            ax.xaxis.set_major_locator(MaxNLocator(nbins=10)) 
+            ax.set_xlabel(term.replace('(finite diff.)', ''), fontsize=20)     
 
         g.set_titles("")
         g.fig.subplots_adjust(hspace=-.5)
-        g.set(yticks=[], ylabel="", xlabel=term.replace('(finite diff.)', ''))
+        g.set(yticks=[], ylabel="")
         g.despine(left=True)
         plot_filename = f'ridge_plot_{group_name.replace("/", "_")}_{term.replace("/", "_").replace("(finite diff.)", "")}.png'
         plot_path = os.path.join(output_directory, plot_filename)
