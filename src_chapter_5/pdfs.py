@@ -6,7 +6,7 @@
 #    By: daniloceano <danilo.oceano@gmail.com>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/29 14:56:47 by daniloceano       #+#    #+#              #
-#    Updated: 2024/06/17 11:27:23 by daniloceano      ###   ########.fr        #
+#    Updated: 2024/06/22 20:26:27 by daniloceano      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -124,7 +124,7 @@ def plot_ridge_group(systems_energetics, group_name, terms_prefix, output_direct
     n_cols = 2
     n_rows = (n_terms + 1) // n_cols
 
-    fig, axes = plt.subplots(n_rows, n_cols, figsize=(14, 4 * n_rows), sharex=True)
+    fig, axes = plt.subplots(n_rows, n_cols, figsize=(14, 4 * n_rows), sharex=False)
 
     for idx, (ax, term) in enumerate(zip(axes.flatten(), terms)):
         sns.kdeplot(data=all_data_melted[all_data_melted['Term'] == term], x='Value', ax=ax, fill=True)
