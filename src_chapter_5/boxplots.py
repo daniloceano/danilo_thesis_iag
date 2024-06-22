@@ -6,7 +6,7 @@
 #    By: daniloceano <danilo.oceano@gmail.com>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/02 17:31:28 by daniloceano       #+#    #+#              #
-#    Updated: 2024/06/22 16:35:20 by daniloceano      ###   ########.fr        #
+#    Updated: 2024/06/22 18:16:36 by daniloceano      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -130,8 +130,9 @@ def plot_box_plots_by_phase(systems_energetics, group_name, terms_prefix, output
     fig, axes = plt.subplots(n_rows, n_cols, figsize=(14, 4 * n_rows), sharex=True)
 
     for idx, (ax, term) in enumerate(zip(axes.flatten(), terms)):
-        sns.boxplot(x='phase', y=term, data=all_data, palette=COLOR_PHASES.values(), hue='phase',
-                    order=['incipient', 'intensification', 'mature', 'decay', 'intensification 2', 'mature 2', 'decay 2'], ax=ax)
+        order=['incipient', 'intensification', 'mature', 'decay', 'intensification 2', 'mature 2', 'decay 2']
+        palette = [COLOR_PHASES[phase] for phase in order]
+        sns.boxplot(x='phase', y=term, data=all_data, palette=palette, hue='phase', hue_order=order, order=order, ax=ax)
         ax.axhline(y=0, color='k', linestyle='--', alpha=0.8, linewidth=0.5)
         ax.set_title(term, fontsize=TITLE_FONT_SIZE)
         ax.tick_params(axis='both', which='major', labelsize=TICK_FONT_SIZE)
