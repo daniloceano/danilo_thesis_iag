@@ -1,0 +1,110 @@
+2024-05-10 12:33:47,724 - lorenz_cycle - INFO - Starting LEC analysis
+2024-05-10 12:33:47,724 - lorenz_cycle - INFO - Command line arguments: Namespace(infile='samples/Reg1-Representative_NCEP-R2.nc', residuals=True, geopotential=False, fixed=True, track=False, choose=False, zeta=False, mpas=False, plots=True, verbosity=True, cdsapi=False, trackfile='inputs/track', outname=None)
+2024-05-10 12:33:47,724 - lorenz_cycle - DEBUG - Variables specified by the user in: inputs/fvars
+2024-05-10 12:33:47,724 - lorenz_cycle - DEBUG - Attempting to read inputs/fvars file...
+2024-05-10 12:33:47,733 - lorenz_cycle - DEBUG - List of variables found:
+                                standard_name             Variable Units
+Air Temperature               air_temperature           TMP_2_ISBL     K
+Geopotential Height       geopotential_height           HGT_2_ISBL     m
+Omega Velocity                          omega         V_VEL_2_ISBL  Pa/s
+Eastward Wind Component         eastward_wind         U_GRD_2_ISBL   m/s
+Northward Wind Component       northward_wind         V_GRD_2_ISBL   m/s
+Longitude                                 NaN                lon_2   NaN
+Latitude                                  NaN                lat_2   NaN
+Time                                      NaN  initial_time0_hours   NaN
+Vertical Level                            NaN             lv_ISBL3   NaN
+2024-05-10 12:33:47,733 - lorenz_cycle - DEBUG - Opening input data... 
+2024-05-10 12:33:48,420 - lorenz_cycle - DEBUG - Ok.
+2024-05-10 12:33:48,423 - lorenz_cycle - DEBUG - Assigning geospatial coordinates in radians... 
+2024-05-10 12:33:48,425 - lorenz_cycle - DEBUG - Ok.
+2024-05-10 12:33:48,432 - lorenz_cycle - DEBUG - Data opened successfully.
+2024-05-10 12:33:48,437 - lorenz_cycle - DEBUG - Loading data into memory..
+2024-05-10 12:33:48,490 - lorenz_cycle - DEBUG - Data loaded into memory.
+2024-05-10 12:33:48,491 - lorenz_cycle - INFO - Bounding box: min_lon=-60.0, max_lon=-30.0, min_lat=-42.5, max_lat=-17.5
+2024-05-10 12:33:49,350 - lorenz_cycle - DEBUG - Computing Az...
+2024-05-10 12:33:49,387 - lorenz_cycle - DEBUG - Ok.
+2024-05-10 12:33:49,387 - lorenz_cycle - DEBUG - Computing Ae...
+2024-05-10 12:33:49,437 - lorenz_cycle - DEBUG - Ok.
+2024-05-10 12:33:49,437 - lorenz_cycle - DEBUG - Computing Kz...
+2024-05-10 12:33:49,465 - lorenz_cycle - DEBUG - Ok.
+2024-05-10 12:33:49,465 - lorenz_cycle - DEBUG - Computing Ke...
+2024-05-10 12:33:49,555 - lorenz_cycle - DEBUG - Ok.
+2024-05-10 12:33:49,555 - lorenz_cycle - INFO - Computed energy contents
+2024-05-10 12:33:49,555 - lorenz_cycle - DEBUG - Calculating CZ...
+2024-05-10 12:33:49,594 - lorenz_cycle - DEBUG - Done.
+2024-05-10 12:33:49,594 - lorenz_cycle - DEBUG - Calculating CA...
+2024-05-10 12:33:49,748 - lorenz_cycle - DEBUG - Done.
+2024-05-10 12:33:49,748 - lorenz_cycle - DEBUG - Calculating CK...
+2024-05-10 12:33:50,162 - lorenz_cycle - DEBUG - Done.
+2024-05-10 12:33:50,162 - lorenz_cycle - DEBUG - Calculating CE...
+2024-05-10 12:33:50,230 - lorenz_cycle - DEBUG - Done.
+2024-05-10 12:33:50,230 - lorenz_cycle - INFO - Computed conversion terms
+2024-05-10 12:33:50,231 - lorenz_cycle - DEBUG - Calculating BAZ...
+2024-05-10 12:33:50,489 - lorenz_cycle - DEBUG - Done.
+2024-05-10 12:33:50,489 - lorenz_cycle - DEBUG - Calculating BAE...
+2024-05-10 12:33:50,717 - lorenz_cycle - DEBUG - Done.
+2024-05-10 12:33:50,717 - lorenz_cycle - DEBUG - Calculating BKZ...
+2024-05-10 12:33:51,078 - lorenz_cycle - DEBUG - Done.
+2024-05-10 12:33:51,078 - lorenz_cycle - DEBUG - Calculating BKE...
+2024-05-10 12:33:51,301 - lorenz_cycle - DEBUG - Done.
+2024-05-10 12:33:51,301 - lorenz_cycle - DEBUG - Calculating BΦZ...
+2024-05-10 12:33:51,369 - lorenz_cycle - DEBUG - Done.
+2024-05-10 12:33:51,369 - lorenz_cycle - DEBUG - Calculating BΦE...
+2024-05-10 12:33:51,485 - lorenz_cycle - DEBUG - Done.
+2024-05-10 12:33:51,485 - lorenz_cycle - INFO - Computed boundary terms
+2024-05-10 12:33:51,485 - lorenz_cycle - DEBUG - Computing Gz...
+2024-05-10 12:33:51,521 - lorenz_cycle - DEBUG - Ok.
+2024-05-10 12:33:51,521 - lorenz_cycle - DEBUG - Computing Ge...
+2024-05-10 12:33:51,586 - lorenz_cycle - DEBUG - Ok.
+2024-05-10 12:33:51,586 - lorenz_cycle - INFO - Computed generation dissipation terms
+2024-05-10 12:33:51,587 - lorenz_cycle - DEBUG - Estimating budget values using finite differences...
+2024-05-10 12:33:51,588 - lorenz_cycle - DEBUG - Done.
+2024-05-10 12:33:51,588 - lorenz_cycle - DEBUG - Estimating residuals...
+2024-05-10 12:33:51,589 - lorenz_cycle - DEBUG - Done.
+2024-05-10 12:33:51,589 - lorenz_cycle - INFO - Computed budget and residuals
+2024-05-10 12:33:51,590 - lorenz_cycle - INFO - Results saved to ../LEC_Results/Reg1-Representative_NCEP-R2_fixed/Reg1-Representative_NCEP-R2_fixed_results.csv
+2024-05-10 12:33:51,593 - lorenz_cycle - INFO - Generating plots..
+2024-05-10 12:33:51,593 - lorenz_cycle - INFO - Plotting timeseries...
+2024-05-10 12:33:51,834 - lorenz_cycle - INFO - Figure saved for energy in directory: ../LEC_Results/Reg1-Representative_NCEP-R2_fixed/Figures/timeseries
+2024-05-10 12:33:51,930 - lorenz_cycle - INFO - Figure saved for conversion in directory: ../LEC_Results/Reg1-Representative_NCEP-R2_fixed/Figures/timeseries
+2024-05-10 12:33:52,022 - lorenz_cycle - INFO - Figure saved for boundary in directory: ../LEC_Results/Reg1-Representative_NCEP-R2_fixed/Figures/timeseries
+2024-05-10 12:33:52,162 - lorenz_cycle - INFO - Figure saved for budget_diff in directory: ../LEC_Results/Reg1-Representative_NCEP-R2_fixed/Figures/timeseries
+2024-05-10 12:33:52,258 - lorenz_cycle - INFO - Figure saved for residuals in directory: ../LEC_Results/Reg1-Representative_NCEP-R2_fixed/Figures/timeseries
+2024-05-10 12:33:52,348 - lorenz_cycle - INFO - Figure saved for generation_dissipation in directory: ../LEC_Results/Reg1-Representative_NCEP-R2_fixed/Figures/timeseries
+2024-05-10 12:33:52,449 - lorenz_cycle - INFO - Figure saved for comparing_generation in directory: ../LEC_Results/Reg1-Representative_NCEP-R2_fixed/Figures/timeseries
+2024-05-10 12:33:52,550 - lorenz_cycle - INFO - Figure saved for comparing_dissipation in directory: ../LEC_Results/Reg1-Representative_NCEP-R2_fixed/Figures/timeseries
+2024-05-10 12:33:52,551 - lorenz_cycle - INFO - Plotting box limits on map...
+2024-05-10 12:33:52,947 - lorenz_cycle - INFO - Figure saved in directory: ../LEC_Results/Reg1-Representative_NCEP-R2_fixed/Figures
+2024-05-10 12:33:52,947 - lorenz_cycle - INFO - Plotting boxplots...
+2024-05-10 12:33:52,956 - lorenz_cycle - INFO - Creating boxplot for each time
+2024-05-10 12:33:53,521 - lorenz_cycle - INFO - Figure saved in directory: ../LEC_Results/Reg1-Representative_NCEP-R2_fixed/Figures/boxplots
+2024-05-10 12:33:54,113 - lorenz_cycle - INFO - Figure saved in directory: ../LEC_Results/Reg1-Representative_NCEP-R2_fixed/Figures/boxplots
+2024-05-10 12:33:54,445 - lorenz_cycle - INFO - Figure saved in directory: ../LEC_Results/Reg1-Representative_NCEP-R2_fixed/Figures/boxplots
+2024-05-10 12:33:54,445 - lorenz_cycle - INFO - Creating boxplot for each vertical level
+2024-05-10 12:33:54,809 - lorenz_cycle - INFO - Created ../LEC_Results/Reg1-Representative_NCEP-R2_fixed/Figures/boxplots/boxplot_vertical_levels_energy.png
+2024-05-10 12:33:55,231 - lorenz_cycle - INFO - Created ../LEC_Results/Reg1-Representative_NCEP-R2_fixed/Figures/boxplots/boxplot_vertical_levels_conversion.png
+2024-05-10 12:33:55,429 - lorenz_cycle - INFO - Created ../LEC_Results/Reg1-Representative_NCEP-R2_fixed/Figures/boxplots/boxplot_vertical_levels_generation_dissipation.png
+2024-05-10 12:33:55,429 - lorenz_cycle - INFO - Creating boxplot for each term
+2024-05-10 12:33:55,503 - lorenz_cycle - INFO - boxplot_terms_energy.png created
+2024-05-10 12:33:55,577 - lorenz_cycle - INFO - boxplot_terms_conversion.png created
+2024-05-10 12:33:55,654 - lorenz_cycle - INFO - boxplot_terms_boundary.png created
+2024-05-10 12:33:55,743 - lorenz_cycle - INFO - boxplot_terms_budget_diff.png created
+2024-05-10 12:33:55,819 - lorenz_cycle - INFO - boxplot_terms_residuals.png created
+2024-05-10 12:33:55,882 - lorenz_cycle - INFO - boxplot_terms_generation_dissipation.png created
+2024-05-10 12:33:56,020 - lorenz_cycle - INFO - boxplot_terms_comparing_generation.png created
+2024-05-10 12:33:56,082 - lorenz_cycle - INFO - boxplot_terms_comparing_dissipation.png created
+2024-05-10 12:33:56,162 - lorenz_cycle - INFO - Lorenz cycle plot saved to ../LEC_Results/Reg1-Representative_NCEP-R2_fixed/Figures/LEC/LEC_example.png
+2024-05-10 12:33:56,236 - lorenz_cycle - INFO - Lorenz cycle plot saved to ../LEC_Results/Reg1-Representative_NCEP-R2_fixed/Figures/LEC/LEC_2005-08-08.png
+2024-05-10 12:33:56,309 - lorenz_cycle - INFO - Lorenz cycle plot saved to ../LEC_Results/Reg1-Representative_NCEP-R2_fixed/Figures/LEC/LEC_2005-08-09.png
+2024-05-10 12:33:56,382 - lorenz_cycle - INFO - Lorenz cycle plot saved to ../LEC_Results/Reg1-Representative_NCEP-R2_fixed/Figures/LEC/LEC_2005-08-10.png
+2024-05-10 12:33:56,456 - lorenz_cycle - INFO - Lorenz cycle plot saved to ../LEC_Results/Reg1-Representative_NCEP-R2_fixed/Figures/LEC/LEC_2005-08-11.png
+2024-05-10 12:33:56,531 - lorenz_cycle - INFO - Lorenz cycle plot saved to ../LEC_Results/Reg1-Representative_NCEP-R2_fixed/Figures/LEC/LEC_2005-08-12.png
+2024-05-10 12:33:56,602 - lorenz_cycle - INFO - Lorenz cycle plot saved to ../LEC_Results/Reg1-Representative_NCEP-R2_fixed/Figures/LEC/LEC_2005-08-13.png
+2024-05-10 12:33:56,675 - lorenz_cycle - INFO - Lorenz cycle plot saved to ../LEC_Results/Reg1-Representative_NCEP-R2_fixed/Figures/LEC/LEC_2005-08-14.png
+2024-05-10 12:33:56,747 - lorenz_cycle - INFO - Lorenz cycle plot saved to ../LEC_Results/Reg1-Representative_NCEP-R2_fixed/Figures/LEC/LEC_2005-08-15.png
+2024-05-10 12:33:56,757 - lorenz_cycle - INFO - Creating hovmoller diagrams
+2024-05-10 12:33:57,207 - lorenz_cycle - INFO - Figure saved to ../LEC_Results/Reg1-Representative_NCEP-R2_fixed/Figures/hovmollers/hovmoller_energy.png
+2024-05-10 12:33:57,843 - lorenz_cycle - INFO - Figure saved to ../LEC_Results/Reg1-Representative_NCEP-R2_fixed/Figures/hovmollers/hovmoller_conversion.png
+2024-05-10 12:33:58,143 - lorenz_cycle - INFO - Figure saved to ../LEC_Results/Reg1-Representative_NCEP-R2_fixed/Figures/hovmollers/hovmoller_generation_dissipation.png
+2024-05-10 12:33:58,143 - lorenz_cycle - INFO - Hovmoller diagrams created
+2024-05-10 12:33:58,143 - lorenz_cycle - INFO - --- 9.707496881484985 seconds running fixed framework ---
