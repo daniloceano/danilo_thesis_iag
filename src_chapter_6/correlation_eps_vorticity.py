@@ -59,7 +59,8 @@ def main():
     for cluster, vorticities in vorticity_clusters.items():
         for vorticity_list in vorticities:
             for vor in vorticity_list:
-                all_data.append({'EP': cluster, 'Vorticity': vor})
+                ep = cluster.replace('Cluster', 'EP')
+                all_data.append({'EP': ep, 'Vorticity': vor})
 
     df = pd.DataFrame(all_data)
     
