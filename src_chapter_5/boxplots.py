@@ -6,7 +6,7 @@
 #    By: daniloceano <danilo.oceano@gmail.com>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/02 17:31:28 by daniloceano       #+#    #+#              #
-#    Updated: 2024/06/22 18:16:36 by daniloceano      ###   ########.fr        #
+#    Updated: 2024/07/09 12:47:16 by daniloceano      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from tqdm import tqdm
 
-PATH = '/Users/danilocoutodesouza/Documents/Programs_and_scripts/energetic_patterns_cyclones_south_atlantic'
+PATH = '../../Programs_and_scripts/energetic_patterns_cyclones_south_atlantic'
 base_path = f'{PATH}/csv_database_energy_by_periods'
 output_directory = f'../figures_chapter_5/boxplots/'
 
@@ -139,6 +139,7 @@ def plot_box_plots_by_phase(systems_energetics, group_name, terms_prefix, output
         ax.tick_params(axis='x', which='major', labelrotation=45)
         # Add letter label
         ax.text(0.02, 0.93, f'({chr(65 + idx)})', transform=ax.transAxes, fontsize=TITLE_FONT_SIZE, fontweight='bold')
+        ax.text(0.5, 0.93, {group_name}, transform=ax.transAxes, fontsize=TITLE_FONT_SIZE, fontweight='bold')
 
     plt.tight_layout()
     plot_filename = f'box_plot_{group_name.replace(" ", "_").replace("/", "_")}.png'
