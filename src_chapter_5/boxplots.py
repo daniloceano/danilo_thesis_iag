@@ -6,7 +6,7 @@
 #    By: daniloceano <danilo.oceano@gmail.com>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/02 17:31:28 by daniloceano       #+#    #+#              #
-#    Updated: 2024/07/09 12:47:16 by daniloceano      ###   ########.fr        #
+#    Updated: 2024/07/09 13:04:54 by daniloceano      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -99,9 +99,9 @@ def plot_box_plots_total(systems_energetics, groups, output_directory):
         ax.tick_params(axis='both', which='major', labelsize=TICK_FONT_SIZE + 2)
         ax.set_xlabel('')
         ax.set_ylabel('')
-        # Add letter label
-        ax.text(0.02, 0.95, f'({chr(65 + idx)})', transform=ax.transAxes, fontsize=TITLE_FONT_SIZE, fontweight='bold')
-
+        # Add letter label and group name
+        ax.text(0.02, 0.95, f'({chr(65 + idx)}) {str(group_name)}', transform=ax.transAxes, fontsize=TITLE_FONT_SIZE, fontweight='bold')
+    
     # Remove any empty subplots
     if n_groups < n_rows * n_cols:
         for idx in range(n_groups, n_rows * n_cols):
@@ -114,6 +114,7 @@ def plot_box_plots_total(systems_energetics, groups, output_directory):
     plt.savefig(plot_path)
     plt.close()
     print(f"Saved {plot_filename} in {output_directory}")
+
 
 def plot_box_plots_by_phase(systems_energetics, group_name, terms_prefix, output_directory):
     """
@@ -130,7 +131,7 @@ def plot_box_plots_by_phase(systems_energetics, group_name, terms_prefix, output
     fig, axes = plt.subplots(n_rows, n_cols, figsize=(14, 4 * n_rows), sharex=True)
 
     for idx, (ax, term) in enumerate(zip(axes.flatten(), terms)):
-        order=['incipient', 'intensification', 'mature', 'decay', 'intensification 2', 'mature 2', 'decay 2']
+        order = ['incipient', 'intensification', 'mature', 'decay', 'intensification 2', 'mature 2', 'decay 2']
         palette = [COLOR_PHASES[phase] for phase in order]
         sns.boxplot(x='phase', y=term, data=all_data, palette=palette, hue='phase', hue_order=order, order=order, ax=ax)
         ax.axhline(y=0, color='k', linestyle='--', alpha=0.8, linewidth=0.5)
@@ -139,7 +140,6 @@ def plot_box_plots_by_phase(systems_energetics, group_name, terms_prefix, output
         ax.tick_params(axis='x', which='major', labelrotation=45)
         # Add letter label
         ax.text(0.02, 0.93, f'({chr(65 + idx)})', transform=ax.transAxes, fontsize=TITLE_FONT_SIZE, fontweight='bold')
-        ax.text(0.5, 0.93, {group_name}, transform=ax.transAxes, fontsize=TITLE_FONT_SIZE, fontweight='bold')
 
     plt.tight_layout()
     plot_filename = f'box_plot_{group_name.replace(" ", "_").replace("/", "_")}.png'
