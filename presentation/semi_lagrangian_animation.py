@@ -6,7 +6,7 @@
 #    By: daniloceano <danilo.oceano@gmail.com>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/29 19:00:08 by daniloceano       #+#    #+#              #
-#    Updated: 2024/07/29 19:47:41 by daniloceano      ###   ########.fr        #
+#    Updated: 2024/07/30 09:35:41 by daniloceano      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -55,18 +55,24 @@ setup_gridlines(ax1)
 
 scat1 = ax1.scatter([], [], color='red', s=50, transform=ccrs.PlateCarree())
 line1, = ax1.plot([], [], color='blue', linewidth=2, transform=ccrs.PlateCarree())
+rect1 = None  # Initialize the rectangle object
 
 def update1(frame):
+    global rect1
     scat1.set_offsets(track[['lon', 'lat']].iloc[:frame + 1].values)
     line1.set_data(track['lon'].iloc[:frame + 1].values, track['lat'].iloc[:frame + 1].values)
     
     current_lon = track['lon'].iloc[frame]
     current_lat = track['lat'].iloc[frame]
-    rect = Rectangle((current_lon - 7.5, current_lat - 7.5), 15, 15,
-                     linewidth=1, edgecolor='red', facecolor='none', zorder=3)
-    ax1.add_patch(rect)
     
-    return [scat1, line1, rect]
+    if rect1:
+        rect1.remove()  # Remove the previous rectangle
+    
+    rect1 = Rectangle((current_lon - 7.5, current_lat - 7.5), 15, 15,
+                      linewidth=1, edgecolor='red', facecolor='none', zorder=3)
+    ax1.add_patch(rect1)
+    
+    return [scat1, line1, rect1]
 
 ani1 = FuncAnimation(fig1, update1, frames=len(track), interval=200, blit=True)
 
@@ -82,28 +88,28 @@ scat2 = ax2.scatter([], [], color='red', s=50, transform=ccrs.PlateCarree())
 line2, = ax2.plot([], [], color='blue', linewidth=2, transform=ccrs.PlateCarree())
 
 # Create all squares initially
-squares = []
+squares = {}
 for i in range(len(track)):
     current_lon = track['lon'].iloc[i]
     current_lat = track['lat'].iloc[i]
-    rect = Rectangle((current_lon - 7.5, current_lat - 7.5), 15, 15,
-                     linewidth=1, edgecolor='red', facecolor='none', zorder=3)
-    squares.append(rect)
+    key = (current_lon - 7.5, current_lat - 7.5)
+    rect = Rectangle(key, 15, 15, linewidth=1, edgecolor='red', facecolor='none', zorder=3)
+    squares[key] = rect
     ax2.add_patch(rect)
 
 def update2(frame):
     scat2.set_offsets(track[['lon', 'lat']].iloc[:frame + 1].values)
     line2.set_data(track['lon'].iloc[:frame + 1].values, track['lat'].iloc[:frame + 1].values)
     
-    # Change the face color of the current square to red with some alpha
-    current_lon = track['lon'].iloc[frame]
-    current_lat = track['lat'].iloc[frame]
-    for rect in squares:
-        if rect.get_xy() == (current_lon - 7.5, current_lat - 7.5):
+    # Update squares' face color based on the cyclone's current position
+    for key, rect in squares.items():
+        if rect.get_xy() == (track['lon'].iloc[frame] - 7.5, track['lat'].iloc[frame] - 7.5):
             rect.set_facecolor('red')
             rect.set_alpha(0.3)
+        else:
+            rect.set_facecolor('none')
     
-    return [scat2, line2] + squares
+    return [scat2, line2] + list(squares.values())
 
 ani2 = FuncAnimation(fig2, update2, frames=len(track), interval=200, blit=True)
 
