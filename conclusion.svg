@@ -7,7 +7,7 @@
    viewBox="0 0 1122.5197 793.70081"
    version="1.1"
    id="svg1"
-   inkscape:version="1.3.2 (1:1.3.2+202311252150+091e20ef0f)"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25)"
    sodipodi:docname="conclusion.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -25,11 +25,11 @@
      inkscape:document-units="mm"
      inkscape:zoom="0.76613356"
      inkscape:cx="491.42867"
-     inkscape:cy="426.81853"
-     inkscape:window-width="1368"
-     inkscape:window-height="836"
-     inkscape:window-x="1352"
-     inkscape:window-y="27"
+     inkscape:cy="426.1659"
+     inkscape:window-width="1920"
+     inkscape:window-height="942"
+     inkscape:window-x="0"
+     inkscape:window-y="25"
      inkscape:window-maximized="1"
      inkscape:current-layer="layer1" />
   <defs
@@ -130,19 +130,6 @@
     <filter
        inkscape:collect="always"
        style="color-interpolation-filters:sRGB"
-       id="filter6"
-       x="-0.006280711"
-       y="-0.0040905402"
-       width="1.0125614"
-       height="1.0081811">
-      <feGaussianBlur
-         inkscape:collect="always"
-         stdDeviation="1.0459514"
-         id="feGaussianBlur6" />
-    </filter>
-    <filter
-       inkscape:collect="always"
-       style="color-interpolation-filters:sRGB"
        id="filter5"
        x="-0.0096218245"
        y="-0.0038387469"
@@ -152,6 +139,32 @@
          inkscape:collect="always"
          stdDeviation="1.0459514"
          id="feGaussianBlur5" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter5-0"
+       x="-0.020170772"
+       y="-0.008624803"
+       width="1.04034"
+       height="1.0172512">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="1.0459514"
+         id="feGaussianBlur5-5" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter6"
+       x="-0.006280711"
+       y="-0.0040905402"
+       width="1.0125614"
+       height="1.0081811">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="1.0459514"
+         id="feGaussianBlur6" />
     </filter>
   </defs>
   <g
@@ -181,12 +194,12 @@
        transform="translate(-267.57737,-31.326131)"
        x="85.931091"
        y="0"><tspan
-         x="371.76388"
-         y="57.53128"
+         x="373.29383"
+         y="58.266339"
          id="tspan1">Latent Heat
 </tspan><tspan
-         x="401.85507"
-         y="90.864654"
+         x="402.38892"
+         y="91.599713"
          id="tspan2">Release</tspan></text>
     <text
        xml:space="preserve"
@@ -194,11 +207,11 @@
        style="font-weight:bold;font-size:26.6667px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';white-space:pre;shape-inside:url(#rect4-1);display:inline;fill:#404040;fill-opacity:1;stroke:none;stroke-width:3.77953;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
        transform="translate(540.59691,424.14958)"><tspan
          x="353.72461"
-         y="57.53128"
+         y="58.266339"
          id="tspan3">Baroclinic
 </tspan><tspan
          x="353.72461"
-         y="90.864654"
+         y="91.599713"
          id="tspan4">Instability</tspan></text>
     <text
        xml:space="preserve"
@@ -206,57 +219,63 @@
        style="font-weight:bold;font-size:26.6667px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';white-space:pre;shape-inside:url(#rect4-1-8);display:inline;fill:#404040;fill-opacity:1;stroke:none;stroke-width:3.77953;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
        transform="translate(-274.82719,686.5506)"><tspan
          x="353.72461"
-         y="57.53128"
+         y="58.266339"
          id="tspan5">Barotropic
 </tspan><tspan
          x="353.72461"
-         y="90.864654"
+         y="91.599713"
          id="tspan6">Instability</tspan></text>
-    <path
-       id="rect5-7-0"
-       style="opacity:0.670644;fill:#0042b7;fill-opacity:0.936557;stroke:none;stroke-width:3.77953;stroke-linejoin:round;stroke-opacity:1;filter:url(#filter6)"
-       d="M 944.58189,236.99298 C 991.36573,150.86181 1042.476,63.393994 1042.476,63.393994 l -5.221,355.029496 c 0,0 -1.6413,43.04043 -8.089,76.41623 -3.863,19.99666 -16.0197,71.34494 -44.56109,103.92347 -28.54142,32.57852 -91.90581,42.2664 -140.12107,57.04484 -32.74087,10.03539 -66.277,21.94035 -100.51408,21.2363 -30.21117,-0.62126 -66.69681,-0.79018 -87.84934,-22.36959 -11.6271,-11.86173 -16.36116,-32.69558 -11.32897,-48.5249 10.2251,-32.16419 48.21622,-47.66 75.73012,-67.2067 16.17293,-11.48974 19.66079,-10.06229 51.95578,-29.03092 22.18989,-13.03335 49.9869,-48.8561 58.31561,-65.82832 31.03136,-63.23559 76.06267,-137.63516 113.78893,-207.09092 z"
-       sodipodi:nodetypes="sccszaaaaasss"
-       transform="matrix(-1,0,0,1,1339.9312,22.653722)" />
     <text
        xml:space="preserve"
        style="font-weight:bold;font-size:29.3333px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';opacity:0.670644;fill:#0042b7;fill-opacity:0.670588;stroke:none;stroke-width:3.77953;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
-       x="694.51624"
-       y="707.90723"
+       x="501.33844"
+       y="737.9281"
        id="text7-5-0"><tspan
          sodipodi:role="line"
          id="tspan7-6-8"
-         x="694.51624"
-         y="707.90723">Extratropical</tspan></text>
+         x="501.33844"
+         y="737.9281">Extratropical</tspan></text>
     <path
        id="rect5"
        style="opacity:1;fill:none;fill-opacity:1;stroke:#b70a00;stroke-width:3.77953;stroke-linejoin:round;stroke-dasharray:11.3386, 11.3386;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter5)"
        d="M 206.36077,384.20736 C 243.22435,285.73643 299.03391,82.693332 299.03391,82.693332 l 1.30525,356.334758 c 0,0 17.66224,81.90284 6.69725,122.46123 -13.12918,48.56348 -28.48969,77.86694 -70.65476,105.30584 -53.09072,34.54877 -186.65154,69.83117 -186.65154,69.83117 0,0 111.56033,-232.02597 156.63066,-352.41897 z"
        sodipodi:nodetypes="accssca" />
+    <path
+       id="rect5-2"
+       style="fill:none;fill-opacity:1;stroke:#45b700;stroke-width:3.77953;stroke-linejoin:round;stroke-dasharray:11.3386, 11.3386;stroke-dashoffset:0;stroke-opacity:0.989664;filter:url(#filter5-0)"
+       d="m 214.34035,590.14022 c -68.10133,-0.99166 17.47882,-165.83416 31.32613,-247.99854 14.33721,-85.07124 53.51548,-253.219565 53.51548,-253.219565 0,0 41.46274,230.730335 83.53634,339.366435 17.49898,45.18323 38.54634,54.49247 8.95977,126.01331 -29.29829,70.82396 -137.92113,36.41233 -177.33772,35.83836 z"
+       sodipodi:nodetypes="sacsss" />
     <text
        xml:space="preserve"
-       style="font-weight:bold;font-size:29.3333px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';opacity:0.670644;fill:#b70a00;fill-opacity:0.670588;stroke:none;stroke-width:3.77953;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
-       x="-61.457649"
-       y="395.25009"
+       style="font-weight:bold;font-size:29.3333px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';opacity:0.97613365;fill:#b70a00;fill-opacity:0.87596899;stroke:none;stroke-width:3.77953;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+       x="-106.55163"
+       y="440.96078"
        id="text7-5"
        transform="rotate(-18.04582)"><tspan
          sodipodi:role="line"
          id="tspan7-6"
-         x="-61.457649"
-         y="395.25009">Tropical?</tspan></text>
+         x="-106.55163"
+         y="440.96078">Tropical?</tspan></text>
     <text
        xml:space="preserve"
-       style="font-weight:bold;font-size:29.3333px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';text-align:center;text-anchor:middle;opacity:0.670644;fill:#44b700;fill-opacity:1;stroke:none;stroke-width:3.77953;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
-       x="695.2215"
-       y="195.43971"
-       id="text7"><tspan
+       style="font-weight:bold;font-size:29.3333px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';text-align:center;text-anchor:middle;opacity:0.866348;fill:#44b700;fill-opacity:1;stroke:none;stroke-width:3.77953;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+       x="24.046757"
+       y="266.7128"
+       id="text7"
+       transform="rotate(-25.730313)"><tspan
          sodipodi:role="line"
          id="tspan7"
-         x="695.2215"
-         y="195.43971" /><tspan
+         x="24.046757"
+         y="266.7128" /><tspan
          sodipodi:role="line"
-         x="695.2215"
-         y="232.10634"
-         id="tspan8">Subtropical ??</tspan></text>
+         x="24.046755"
+         y="303.37943"
+         id="tspan8">Subtropical?</tspan></text>
+    <path
+       id="rect5-7-0"
+       style="opacity:0.670644;fill:#0043b6;fill-opacity:0.832041;stroke:none;stroke-width:3.77953;stroke-linejoin:round;stroke-opacity:1;filter:url(#filter6)"
+       d="M 981.12904,246.12977 C 1027.9129,159.9986 1042.476,63.393994 1042.476,63.393994 l -5.221,355.029496 c 0,0 -4.6182,51.6805 -9.1367,88.75737 -2.4639,20.21679 -14.972,59.0038 -43.51339,91.58233 -28.54142,32.57852 -91.90581,42.2664 -140.12107,57.04484 -32.74087,10.03539 -66.277,21.94035 -100.51408,21.2363 -30.21117,-0.62126 -66.69681,-0.79018 -87.84934,-22.36959 -11.6271,-11.86173 -16.36116,-32.69558 -11.32897,-48.5249 10.2251,-32.16419 48.21622,-47.66 75.73012,-67.2067 16.17293,-11.48974 19.66079,-10.06229 51.95578,-29.03092 22.18989,-13.03335 69.12047,-55.73002 81.81021,-69.74409 58.44172,-64.54084 89.11522,-124.5826 126.84148,-194.03836 z"
+       sodipodi:nodetypes="sccszaaaaasss"
+       transform="matrix(-1,0,0,1,1342.1022,26.348115)" />
   </g>
 </svg>
