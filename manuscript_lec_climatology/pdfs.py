@@ -6,7 +6,7 @@
 #    By: daniloceano <danilo.oceano@gmail.com>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/29 14:56:47 by daniloceano       #+#    #+#              #
-#    Updated: 2024/09/23 12:20:16 by daniloceano      ###   ########.fr        #
+#    Updated: 2024/09/23 15:21:32 by daniloceano      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,7 +19,7 @@ from joypy import joyplot
 from tqdm import tqdm
 from scipy.stats import gaussian_kde
 
-PATH = '/Users/danilocoutodesouza/Documents/Programs_and_scripts/energetic_patterns_cyclones_south_atlantic'
+PATH = '../../Programs_and_scripts/energetic_patterns_cyclones_south_atlantic'
 base_path = f'{PATH}/csv_database_energy_by_periods'
 output_directory = f'./figures/pdfs/'
 
@@ -37,11 +37,11 @@ COLOR_PHASES = {
 COLOR_TERMS = ["#3B95BF", "#87BF4B", "#BFAB37", "#BF3D3B", "#873e23", "#A13BF0"]
 
 quantile_caps = {
-    'Kz': (0, 0.5),
+    # 'Kz': (0, 0.8),
     'Cz': (0.2, 0.9),
     'Ck': (0.2, 0.9),
-    'Ca': (0.2, 0.9),
-    'Ce': (0.2, 0.9),
+    # 'Ca': (0.2, 0.9),
+    'Ce': (0.01, 0.99),
     'BAz': (0.2, 0.9),
     'BAe': (0.2, 0.9),
     'BKz': (0.2, 0.9),
@@ -52,6 +52,25 @@ quantile_caps = {
     '∂Kz/∂t (finite diff.)': (0.3, 0.7),
     '∂Az/∂t (finite diff.)': (0.3, 0.7),
     '∂Ae/∂t (finite diff.)': (0.3, 0.7),
+}
+
+LEGEND_POSITION = {
+    'Energy Terms': 'upper right',
+    'Conversion Terms': 'upper right',
+    'Boundary Terms': 'upper right',
+    'Pressure Work Terms': 'upper right',
+    'Generation/Dissipation Terms': 'best',
+    'Budget Terms': 'best'
+}
+
+# Define x-axis limits for each group
+AXIS_LIMITS = {
+    'Energy Terms': (0, 1e6),
+    'Conversion Terms': (-10, 10),
+    'Boundary Terms': (-15, 15),
+    'Pressure Work Terms': (-200, 250),
+    'Generation/Dissipation Terms': (-20, 10),
+    'Budget Terms': (-5, 5)
 }
 
 # Global variables for font sizes
@@ -118,7 +137,7 @@ def plot_group_panel(systems_energetics, groups, output_directory):
     - groups: Dictionary of groups with their corresponding prefixes.
     - output_directory: Directory to save the final combined plot.
     """
-    fig, axes = plt.subplots(2, 3, figsize=(10, 6))
+    fig, axes = plt.subplots(2, 3, figsize=(12, 8))  # Adjusted figure size for better layout
 
     # Get the terms for the group
     terms = systems_energetics[list(systems_energetics.keys())[0]].drop(columns=['Unnamed: 0']).columns.to_list()
@@ -153,75 +172,38 @@ def plot_group_panel(systems_energetics, groups, output_directory):
         for idy, term in enumerate(term_groups[group_name]):
             term_data = mean_data_melted[mean_data_melted['Term'] == term]
 
-            # Apply value capping based on quantiles if the term has specified caps
-            if term in quantile_caps.keys():
-                q1, q2 = quantile_caps[term]
-                lower_cap = term_data['Value'].quantile(q1)
-                upper_cap = term_data['Value'].quantile(q2)
-                term_data['Value'] = term_data['Value'].clip(lower=lower_cap, upper=upper_cap)
+            if 'Kz' in term:
+                term_data['Value'] = term_data['Value'] / 10
 
             if not term_data.empty:
-                sns.kdeplot(data=term_data, x='Value', label=term.split('(finite diff.)')[0], ax=ax, bw_adjust=0.5, fill=False, color=COLOR_TERMS[idy])
-        
+                # Set the label based on the term name
+                label = term if '∂' not in term else term.split('(finite diff.)')[0]
+                label = label+'*' if 'Kz' in label else label
+                sns.kdeplot(data=term_data, x='Value', label=label,
+                            ax=ax, bw_adjust=0.5, fill=False,
+                            color=COLOR_TERMS[idy], linewidth=2, alpha=0.8)
+
+        # Set axis limits based on the group
+        ax.set_xlim(AXIS_LIMITS[group_name])
+
+        # Add vertical line at 0
+        if group_name != 'Energy Terms':
+            ax.axvline(0, color='gray', linestyle='--', linewidth=1, zorder=0)
+
+        legend_position = LEGEND_POSITION.get(group_name, 'best')  # Use 'best' if no position is defined
+        ax.legend(fontsize=LEGEND_FONT_SIZE, loc=legend_position)
+
         ax.set_title(f'{group_name}', fontsize=TITLE_FONT_SIZE)
-        ax.set_xlabel('Value', fontsize=LABEL_FONT_SIZE)
-        ax.set_ylabel('Density', fontsize=LABEL_FONT_SIZE)
-        ax.legend(fontsize=LEGEND_FONT_SIZE)
         ax.tick_params(axis='both', which='major', labelsize=TICK_FONT_SIZE)
+        ax.set_xlabel('', fontsize=LABEL_FONT_SIZE)
+        ax.set_ylabel('', fontsize=LABEL_FONT_SIZE)
 
     plt.tight_layout()
-    combined_plot_filename = 'combined_ridge_plot.png'
+    combined_plot_filename = 'combined_ridge.png'
     combined_plot_path = os.path.join(output_directory, combined_plot_filename)
-    plt.savefig(combined_plot_path)
+    plt.savefig(combined_plot_path, bbox_inches='tight')  # Ensure everything, including legends, fits in the figure
     plt.close()
-    print(f"Saved combined plot with capping as {combined_plot_filename} in {output_directory}")
-
-def plot_ridge_group_phases(systems_energetics, group_name, terms_prefix, output_directory, special_case=None):
-    value_cap = compute_group_caps(systems_energetics, terms_prefix, special_case=special_case)
-    all_data = pd.concat([df.assign(system_id=system_id) for system_id, df in systems_energetics.items()])
-    all_data.rename(columns={'Unnamed: 0': 'Phase'}, inplace=True)
-
-    relevant_columns = ['system_id', 'Phase'] + [col for col in all_data.columns if col.startswith(tuple(terms_prefix))]
-    all_data = all_data[relevant_columns]
-
-    # Exclude "residual" phase
-    all_data = all_data[all_data['Phase'] != 'residual']
-
-    terms = [col for col in all_data.columns if col.startswith(tuple(terms_prefix))]
-    n_terms = len(terms)
-    n_cols = 2
-    n_rows = (n_terms + 1) // n_cols
-
-    fig, axes = plt.subplots(n_rows, n_cols, figsize=(14, 4 * n_rows), sharex=True)
-
-    for idx, (ax, term) in enumerate(zip(axes.flatten(), terms)):
-        for phase, color in COLOR_PHASES.items():
-            if phase in ['residual', 'Total']:
-                continue  # Skip "residual" and handle "Total" separately
-
-            phase_data = all_data.loc[all_data['Phase'] == phase].copy()
-            phase_data.loc[:, term] = phase_data[term].clip(lower=value_cap[0], upper=value_cap[1])
-
-            if not phase_data.empty:
-                sns.kdeplot(data=phase_data, x=term, ax=ax, fill=True, alpha=0.5, color=color, label=phase, bw_adjust=0.5)
-
-        ax.tick_params(axis='both', which='major', labelsize=TICK_FONT_SIZE)
-        ax.set_ylabel('Density', fontsize=LABEL_FONT_SIZE)
-        ax.set_xlabel('Value', fontsize=LABEL_FONT_SIZE)
-        ax.set_title(term.replace('(finite diff.)', ''), fontsize=TITLE_FONT_SIZE)
-        # Add letter label
-        ax.text(0.02, 0.93, f'({chr(65 + idx)})', transform=ax.transAxes, fontsize=TITLE_FONT_SIZE, fontweight='bold')
-    
-        if 'Energy' not in group_name:
-            ax.axvline(x=0, color='black', linestyle='--')
-
-    plt.tight_layout()
-
-    plot_filename = f'ridge_plot_{group_name.replace("/", "_")}.png'.replace('/', '_')  # Remove slashes from filenames
-    plot_path = os.path.join(output_directory, plot_filename)
-    plt.savefig(plot_path)
-    plt.close()
-    print(f"Saved {plot_filename} in {output_directory}")
+    print(f"Saved combined plot as {combined_plot_filename} in {output_directory}")
 
 if __name__ == "__main__":
     os.makedirs(output_directory, exist_ok=True)
@@ -234,23 +216,8 @@ if __name__ == "__main__":
         'Conversion Terms': ['C'],
         'Boundary Terms': ['BA', 'BK'],
         'Pressure Work Terms': ['BΦ'],
-        'Generation/Dissipation Terms': ['G', 'RK'],
+        'Generation/Dissipation Terms': ['G', 'R'],
         'Budget Terms': ['∂']
     }
 
     plot_group_panel(systems_energetics, groups, output_directory)
-
-    # Define term prefixes for each group
-    groups = {
-        'Energy Terms': ['A', 'K'],
-        'Conversion Terms': ['C'],
-        'Boundary Terms': ['B'],
-        'Generation/Dissipation Terms': ['G', 'R'],
-        'Budget': ['∂']
-    }
-
-    # for group_name, terms_prefix in groups.items():
-    #     special_case = None
-    #     if group_name == 'Energy Terms':
-    #         special_case = group_name
-    #     plot_ridge_group_phases(systems_energetics, group_name, terms_prefix, output_directory, special_case=special_case)
