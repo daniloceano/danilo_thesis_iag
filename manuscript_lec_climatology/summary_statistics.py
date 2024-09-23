@@ -1,12 +1,12 @@
 # **************************************************************************** #
 #                                                                              #
 #                                                         :::      ::::::::    #
-#    summary_statistics_v2.py                           :+:      :+:    :+:    #
+#    summary_statistics.py                              :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
 #    By: daniloceano <danilo.oceano@gmail.com>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/02 17:31:28 by daniloceano       #+#    #+#              #
-#    Updated: 2024/09/22 19:52:49 by daniloceano      ###   ########.fr        #
+#    Updated: 2024/09/22 20:51:03 by daniloceano      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,7 @@ import pandas as pd
 
 PATH = '/Users/danilocoutodesouza/Documents/Programs_and_scripts/energetic_patterns_cyclones_south_atlantic'
 base_path = f'{PATH}/csv_database_energy_by_periods'
-output_directory = f'../results_chapter_5/summary_statistics/'
+output_directory = f'./results/summary_statistics/'
 
 def read_life_cycles(base_path):
     """
