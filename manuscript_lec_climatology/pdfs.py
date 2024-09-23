@@ -6,7 +6,7 @@
 #    By: daniloceano <danilo.oceano@gmail.com>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/29 14:56:47 by daniloceano       #+#    #+#              #
-#    Updated: 2024/09/22 21:32:16 by daniloceano      ###   ########.fr        #
+#    Updated: 2024/09/23 12:20:16 by daniloceano      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,6 +32,26 @@ COLOR_PHASES = {
     'mature 2': '#9b2226',
     'decay': '#9aa981',
     'decay 2': '#386641',
+}
+
+COLOR_TERMS = ["#3B95BF", "#87BF4B", "#BFAB37", "#BF3D3B", "#873e23", "#A13BF0"]
+
+quantile_caps = {
+    'Kz': (0, 0.5),
+    'Cz': (0.2, 0.9),
+    'Ck': (0.2, 0.9),
+    'Ca': (0.2, 0.9),
+    'Ce': (0.2, 0.9),
+    'BAz': (0.2, 0.9),
+    'BAe': (0.2, 0.9),
+    'BKz': (0.2, 0.9),
+    'BKe': (0.2, 0.9),
+    'RKz': (0.3, 0.7),
+    'RKe': (0.3, 0.95),
+    '∂Ke/∂t (finite diff.)': (0.3, 0.7),
+    '∂Kz/∂t (finite diff.)': (0.3, 0.7),
+    '∂Az/∂t (finite diff.)': (0.3, 0.7),
+    '∂Ae/∂t (finite diff.)': (0.3, 0.7),
 }
 
 # Global variables for font sizes
@@ -101,7 +121,7 @@ def plot_group_panel(systems_energetics, groups, output_directory):
     fig, axes = plt.subplots(2, 3, figsize=(10, 6))
 
     # Get the terms for the group
-    terms = [term for term in mean_data.columns if term not in ['system_id']]
+    terms = systems_energetics[list(systems_energetics.keys())[0]].drop(columns=['Unnamed: 0']).columns.to_list()
 
     # Group the terms using the prefixes
     term_groups = {}
@@ -130,12 +150,20 @@ def plot_group_panel(systems_energetics, groups, output_directory):
         mean_data_melted = mean_data.melt(id_vars=['system_id'], var_name='Term', value_name='Value')
         
         # Plot the terms for the group
-        for term in term_groups[group_name]:
+        for idy, term in enumerate(term_groups[group_name]):
             term_data = mean_data_melted[mean_data_melted['Term'] == term]
+
+            # Apply value capping based on quantiles if the term has specified caps
+            if term in quantile_caps.keys():
+                q1, q2 = quantile_caps[term]
+                lower_cap = term_data['Value'].quantile(q1)
+                upper_cap = term_data['Value'].quantile(q2)
+                term_data['Value'] = term_data['Value'].clip(lower=lower_cap, upper=upper_cap)
+
             if not term_data.empty:
-                sns.kdeplot(data=term_data, x='Value', label=term, ax=ax, bw_adjust=0.5)
+                sns.kdeplot(data=term_data, x='Value', label=term.split('(finite diff.)')[0], ax=ax, bw_adjust=0.5, fill=False, color=COLOR_TERMS[idy])
         
-        ax.set_title(f'{group_name} Terms', fontsize=TITLE_FONT_SIZE)
+        ax.set_title(f'{group_name}', fontsize=TITLE_FONT_SIZE)
         ax.set_xlabel('Value', fontsize=LABEL_FONT_SIZE)
         ax.set_ylabel('Density', fontsize=LABEL_FONT_SIZE)
         ax.legend(fontsize=LEGEND_FONT_SIZE)
@@ -146,7 +174,7 @@ def plot_group_panel(systems_energetics, groups, output_directory):
     combined_plot_path = os.path.join(output_directory, combined_plot_filename)
     plt.savefig(combined_plot_path)
     plt.close()
-    print(f"Saved combined plot as {combined_plot_filename} in {output_directory}")
+    print(f"Saved combined plot with capping as {combined_plot_filename} in {output_directory}")
 
 def plot_ridge_group_phases(systems_energetics, group_name, terms_prefix, output_directory, special_case=None):
     value_cap = compute_group_caps(systems_energetics, terms_prefix, special_case=special_case)
@@ -207,7 +235,7 @@ if __name__ == "__main__":
         'Boundary Terms': ['BA', 'BK'],
         'Pressure Work Terms': ['BΦ'],
         'Generation/Dissipation Terms': ['G', 'RK'],
-        'Budgets': ['∂']
+        'Budget Terms': ['∂']
     }
 
     plot_group_panel(systems_energetics, groups, output_directory)
@@ -218,7 +246,7 @@ if __name__ == "__main__":
         'Conversion Terms': ['C'],
         'Boundary Terms': ['B'],
         'Generation/Dissipation Terms': ['G', 'R'],
-        'Budgets': ['∂']
+        'Budget': ['∂']
     }
 
     # for group_name, terms_prefix in groups.items():
