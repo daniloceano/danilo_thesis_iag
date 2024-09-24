@@ -6,7 +6,7 @@
 #    By: daniloceano <danilo.oceano@gmail.com>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/29 14:56:47 by daniloceano       #+#    #+#              #
-#    Updated: 2024/09/23 15:21:32 by daniloceano      ###   ########.fr        #
+#    Updated: 2024/09/24 10:49:12 by daniloceano      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -59,7 +59,7 @@ LEGEND_POSITION = {
     'Conversion Terms': 'upper right',
     'Boundary Terms': 'upper right',
     'Pressure Work Terms': 'upper right',
-    'Generation/Dissipation Terms': 'best',
+    'Generation/Residual Terms': 'best',
     'Budget Terms': 'best'
 }
 
@@ -69,9 +69,11 @@ AXIS_LIMITS = {
     'Conversion Terms': (-10, 10),
     'Boundary Terms': (-15, 15),
     'Pressure Work Terms': (-200, 250),
-    'Generation/Dissipation Terms': (-20, 10),
+    'Generation/Residual Terms': (-20, 10),
     'Budget Terms': (-5, 5)
 }
+
+LABELS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
 
 # Global variables for font sizes
 LABEL_FONT_SIZE = 14
@@ -193,7 +195,7 @@ def plot_group_panel(systems_energetics, groups, output_directory):
         legend_position = LEGEND_POSITION.get(group_name, 'best')  # Use 'best' if no position is defined
         ax.legend(fontsize=LEGEND_FONT_SIZE, loc=legend_position)
 
-        ax.set_title(f'{group_name}', fontsize=TITLE_FONT_SIZE)
+        ax.set_title(f'({LABELS[idx]}) {group_name}', fontsize=TITLE_FONT_SIZE)
         ax.tick_params(axis='both', which='major', labelsize=TICK_FONT_SIZE)
         ax.set_xlabel('', fontsize=LABEL_FONT_SIZE)
         ax.set_ylabel('', fontsize=LABEL_FONT_SIZE)
@@ -216,7 +218,7 @@ if __name__ == "__main__":
         'Conversion Terms': ['C'],
         'Boundary Terms': ['BA', 'BK'],
         'Pressure Work Terms': ['BΦ'],
-        'Generation/Dissipation Terms': ['G', 'R'],
+        'Generation/Residual Terms': ['G', 'R'],
         'Budget Terms': ['∂']
     }
 
