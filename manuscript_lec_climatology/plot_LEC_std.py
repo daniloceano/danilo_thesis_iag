@@ -6,7 +6,7 @@
 #    By: daniloceano <danilo.oceano@gmail.com>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/03 23:31:13 by daniloceano       #+#    #+#              #
-#    Updated: 2024/09/24 19:38:24 by daniloceano      ###   ########.fr        #
+#    Updated: 2024/09/25 09:15:21 by daniloceano      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -138,34 +138,25 @@ def plot_term_text_and_value_with_std(ax, start, end, term, term_value, std_valu
     x_pos = mid_point[0] + offset_x
     y_pos = mid_point[1] + offset_y
 
-    # Plot term text in bold black
-    if plot_example:
-        ax.text(
-            x_pos,
-            y_pos,
-            term,
-            ha="center",
-            va="center",
-            fontsize=16,
-            color="k",
-            fontweight="bold",
-        )
-    # Plot value text (mean ± std) in the specified color
+    if 'R' in term or 'G' in term:
+        text = f"{term_value:.2f} ± {std_value:.2f}"
     else:
-        ax.text(
-            x_pos,
-            y_pos,
-            f"{term_value:.2f} ± {std_value:.2f}",
-            ha="center",
-            va="center",
-            color=text_color,
-            fontsize=16,
-            fontweight="bold",
-        )
+        text = f"{term_value:.2f}\n± {std_value:.2f}"
 
-def plot_term_arrows_and_text_with_std(ax, size, term, data, std_data, positions, plot_example=False):
+    ax.text(
+        x_pos,
+        y_pos,
+        text,
+        ha="center",
+        va="center",
+        color=text_color,
+        fontsize=16,
+        fontweight="bold",
+    )
+
+def plot_term_arrows_and_text_with_std(ax, size, term, data, std_data_phase, positions, plot_example=False):
     term_value = data[term]
-    std_value = std_data[term]
+    std_value = std_data_phase[term]
 
     arrow_color = "#5C5850"  # Default color
 
@@ -281,7 +272,7 @@ def plot_arrow(ax, start, end, term_value, color="#5C5850"):
         ),
     )
 
-def _call_plot_with_std(data, std_data, normalized_data, plot_example=False):
+def _call_plot_with_std(data, std_data_phase, normalized_data, plot_example=False):
     # Prepare data
     conversions = TERM_DETAILS["conversion"]["terms"]
     residuals = TERM_DETAILS["residuals"]["terms"]
@@ -322,27 +313,34 @@ def _call_plot_with_std(data, std_data, normalized_data, plot_example=False):
     # Iterate over conversion, residual, and boundary terms and plot mean + std values
     for term in conversions + residuals + boundaries:
         plot_term_arrows_and_text_with_std(
-            ax, size, term, data, std_data, positions, plot_example=plot_example
+            ax, size, term, data, std_data_phase, positions, plot_example=plot_example
         )
-
-    plt.tight_layout()
-
 
 def _plotter(
     daily_means,
+    std_data,
     normalized_data_not_energy,
     figures_directory,
     plot_example=False,
     app_logger=False,
 ):
-    if plot_example:
-        _call_plot_with_std(
-            daily_means.iloc[0],
-            normalized_data_not_energy.iloc[0],
-            plot_example=plot_example,
-        )
-        figure_name = "example"
-        figures_subdirectory = os.path.join(figures_directory, "LEC")
+    for date, data in daily_means.iterrows():
+        # Extract the corresponding normalized data for the day
+        normalized_data = normalized_data_not_energy.loc[date]
+
+        std_data_phase = std_data.loc[date]
+
+        # Plot the Lorenz cycle for the day
+        _call_plot_with_std(data, std_data_phase, normalized_data, plot_example=plot_example)
+
+        if isinstance(data.name, pd.Timestamp):
+            figure_name = data.name.strftime("%Y-%m-%d")
+        else:
+            figure_name = data.name
+
+        plt.tight_layout()
+
+        figures_subdirectory = os.path.join(figures_directory, "LEC_std")
         os.makedirs(figures_subdirectory, exist_ok=True)
         figure_path = os.path.join(figures_subdirectory, f"LEC_{figure_name}.png")
         plt.savefig(figure_path)
@@ -353,32 +351,8 @@ def _plotter(
             else print(f"Lorenz cycle plot saved to {figure_path}")
         )
 
-    else:
-        for date, data in daily_means.iterrows():
-            # Extract the corresponding normalized data for the day
-            normalized_data = normalized_data_not_energy.loc[date]
 
-            # Plot the Lorenz cycle for the day
-            _call_plot_with_std(data, normalized_data, plot_example=plot_example)
-
-            if isinstance(data.name, pd.Timestamp):
-                figure_name = data.name.strftime("%Y-%m-%d")
-            else:
-                figure_name = data.name
-
-            figures_subdirectory = os.path.join(figures_directory, "LEC")
-            os.makedirs(figures_subdirectory, exist_ok=True)
-            figure_path = os.path.join(figures_subdirectory, f"LEC_{figure_name}.png")
-            plt.savefig(figure_path)
-            plt.close()
-            (
-                app_logger.info(f"Lorenz cycle plot saved to {figure_path}")
-                if app_logger
-                else print(f"Lorenz cycle plot saved to {figure_path}")
-            )
-
-
-def plot_period_means(periods_df, figures_directory):
+def plot_period_means(periods_df, std_periods_df, figures_directory): 
 
     # Initialize an empty DataFrame to store period means
     period_means_df = pd.DataFrame()
@@ -401,7 +375,7 @@ def plot_period_means(periods_df, figures_directory):
     )
 
     # Plot period means
-    _plotter(period_means_df, normalized_data_not_energy_periods, figures_directory)
+    _plotter(period_means_df, std_periods_df, normalized_data_not_energy_periods, figures_directory)
 
 
 # Adjust the plotter function to handle both mean and standard deviation
@@ -410,28 +384,14 @@ def plot_lorenzcycletoolkit_with_std(periods_df, std_periods_df, figures_directo
     periods_df = periods_df.rename(columns=lambda x: x.replace(" (finite diff.)", ""))
     std_periods_df = std_periods_df.rename(columns=lambda x: x.replace(" (finite diff.)", ""))
 
-    # Normalize data
-    df_not_energy = np.abs(periods_df.drop(columns=["Az", "Ae", "Kz", "Ke"]))
-    normalized_data_not_energy = (
-        (df_not_energy - df_not_energy.min().min())
-        / (df_not_energy.max().max() - df_not_energy.min().min())
-    ) * 50
-    normalized_data_not_energy = normalized_data_not_energy.clip(lower=1.5, upper=15)
-
-    for date, data in periods_df.iterrows():
-        # Extract the corresponding normalized data for the day
-        normalized_data = normalized_data_not_energy.loc[date]
-        std_data = std_periods_df.loc[date]
-
-        # Plot the Lorenz cycle for the day with std
-        _call_plot_with_std(data, std_data, normalized_data, plot_example=False)
+    plot_period_means(periods_df, std_periods_df, figures_directory)
 
 
 if __name__ == "__main__":
     # Test for Reg1-Representative_fixed
     PATH = '../../Programs_and_scripts/energetic_patterns_cyclones_south_atlantic'
     base_path = f'{PATH}/csv_database_energy_by_periods'
-    figures_directory = "./figures/lec/"
+    figures_directory = "./figures/"
 
     groups = {
         'Energy Terms': ['A', 'K'],

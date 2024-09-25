@@ -6,7 +6,7 @@
 #    By: daniloceano <danilo.oceano@gmail.com>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/03 23:31:13 by daniloceano       #+#    #+#              #
-#    Updated: 2024/09/24 19:19:43 by daniloceano      ###   ########.fr        #
+#    Updated: 2024/09/25 09:02:04 by daniloceano      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -470,15 +470,6 @@ def plot_lorenzcycletoolkit(periods_df, figures_directory):
 
     # Rename columns by removing "(finite diff.)"
     periods_df = periods_df.rename(columns=lambda x: x.replace(" (finite diff.)", ""))
-
-    # Normalize data
-    df_not_energy = np.abs(periods_df.drop(columns=["Az", "Ae", "Kz", "Ke"]))
-    normalized_data_not_energy = (
-        (df_not_energy - df_not_energy.min().min())
-        / (df_not_energy.max().max() - df_not_energy.min().min())
-    ) * 50
-    normalized_data_not_energy = normalized_data_not_energy.clip(lower=1.5, upper=15)
-
     plot_period_means(periods_df, figures_directory)
 
 
@@ -486,7 +477,7 @@ if __name__ == "__main__":
     # Test for Reg1-Representative_fixed
     PATH = '../../Programs_and_scripts/energetic_patterns_cyclones_south_atlantic'
     base_path = f'{PATH}/csv_database_energy_by_periods'
-    figures_directory = "./figures/lec/"
+    figures_directory = "./figures/"
 
     groups = {
         'Energy Terms': ['A', 'K'],
