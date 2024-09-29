@@ -6,7 +6,7 @@
 #    By: daniloceano <danilo.oceano@gmail.com>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/03 23:31:13 by daniloceano       #+#    #+#              #
-#    Updated: 2024/09/25 09:15:21 by daniloceano      ###   ########.fr        #
+#    Updated: 2024/09/28 22:07:16 by daniloceano      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -51,7 +51,7 @@ TERM_DETAILS = {
     },
 }
 
-def plot_boxes(ax, data, normalized_data, positions, size, plot_example=False):
+def plot_boxes(ax, data, std_data_phase, normalized_data, positions, size, plot_example=False):
     # Define edge width range
     min_edge_width = 0
     max_edge_width = 5
@@ -59,6 +59,7 @@ def plot_boxes(ax, data, normalized_data, positions, size, plot_example=False):
     # Create energy boxes and text labels with updated terms
     for term, pos in positions.items():
         term_value = data[term]
+        term_std = std_data_phase[term]
 
         # Get normalized value for the term to determine edge width
         normalized_value = normalized_data[term]
@@ -83,31 +84,17 @@ def plot_boxes(ax, data, normalized_data, positions, size, plot_example=False):
         )
         ax.add_patch(square)
 
-        # Term text in bold black
-        if plot_example:
-            ax.text(
-                pos[0],
-                pos[1],
-                f"{term}",
-                ha="center",
-                va="center",
-                fontsize=16,
-                color="k",
-                fontweight="bold",
-            )
-
         # Value text in the specified color
-        else:
-            ax.text(
-                pos[0],
-                pos[1],
-                f"{term_value:.2f}",
-                ha="center",
-                va="center",
-                fontsize=16,
-                color=value_text_color,
-                fontweight="bold",
-            )
+        ax.text(
+            pos[0],
+            pos[1],
+            f"{term_value:.2f}\n± {term_std:.2f}",
+            ha="center",
+            va="center",
+            fontsize=16,
+            color=value_text_color,
+            fontweight="bold",
+        )
 
 def plot_term_text_and_value_with_std(ax, start, end, term, term_value, std_value, offset=(0, 0), plot_example=False):
     # Determine text color based on term value
@@ -293,7 +280,7 @@ def _call_plot_with_std(data, std_data_phase, normalized_data, plot_example=Fals
     size = 0.4
 
     # Plot the boxes for energy terms
-    plot_boxes(ax, data, normalized_data, positions, size, plot_example)
+    plot_boxes(ax, data, std_data_phase, normalized_data, positions, size, plot_example)
 
     # Add title
     if not plot_example:
