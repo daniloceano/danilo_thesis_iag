@@ -3,6 +3,23 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+def get_season(month):
+    if month in [12, 1, 2]:
+        return 'DJF'  # Dezembro, Janeiro, Fevereiro
+    elif month in [3, 4, 5]:
+        return 'MAM'  # Março, Abril, Maio
+    elif month in [6, 7, 8]:
+        return 'JJA'  # Junho, Julho, Agosto
+    elif month in [9, 10, 11]:
+        return 'SON'  # Setembro, Outubro, Novembro
+    
+season_colors = {
+    'JJA': '#5975A4',  # Azul
+    'MAM': '#CC8963',  # Amarelo
+    'DJF': '#B55D60',  # Vermelho
+    'SON': '#5F9E6E'   # Verde
+}
+
 # Caminhos para os arquivos
 track_path = '../../Programs_and_scripts/energetic_patterns_cyclones_south_atlantic/tracks_SAt_filtered/tracks_SAt_filtered_with_periods.csv'
 pcs_path = '../../Programs_and_scripts/energetic_patterns_cyclones_south_atlantic/csv_eofs_energetics_with_track/Total/pcs_with_dominant_eof.csv'
@@ -49,12 +66,47 @@ region_counts['proportion'] *= 100
 # Pivotar os dados para formato adequado para gráfico de barras empilhadas
 proportion_pivot = region_counts.pivot(index='dominant_eof', columns='region', values='proportion').fillna(0)
 
+# ** Análise de sazonalidade **
+# Adicionar coluna com a estação do ano
+merged_data['month'] = merged_data['date'].dt.month
+merged_data['season'] = merged_data['month'].apply(get_season)
+
+# Contar ocorrências por EOF e estação
+# Calcular a frequência de ocorrência em porcentagem por estação e EOF
+season_order = ['DJF', 'MAM', 'JJA', 'SON']
+seasonal_counts = merged_data.groupby(['dominant_eof', 'season']).size().reset_index(name='count')
+seasonal_counts['season'] = pd.Categorical(seasonal_counts['season'], categories=season_order, ordered=True)
+total_counts_per_eof = seasonal_counts.groupby('dominant_eof')['count'].sum().reset_index(name='total_count')
+seasonal_counts = seasonal_counts.merge(total_counts_per_eof, on='dominant_eof')
+seasonal_counts['frequency'] = (seasonal_counts['count'] / seasonal_counts['total_count']) * 100
+
+# Pivotar para formato de gráfico
+seasonal_pivot = seasonal_counts.pivot(index='dominant_eof', columns='season', values='count').fillna(0)
+
 # Configurar estilo para publicação científica
 sns.set_context("notebook", font_scale=1.5)
 sns.set_style("whitegrid")
 
 # Paletas de cores para gráficos
 palette = sns.color_palette("deep", n_colors=4)
+
+# Gráfico de sazonalidade
+plt.figure(figsize=(12, 8))
+sns.barplot(
+    data=seasonal_counts,
+    x='dominant_eof',
+    y='frequency',
+    hue='season',
+    palette=season_colors,
+    hue_order=season_order  # Aplicar a ordem das categorias
+)
+plt.xlabel('EOF', fontsize=16)
+plt.ylabel('Frequency of Occurrence (%)', fontsize=16)
+plt.xticks(fontsize=14)
+plt.yticks(fontsize=14)
+plt.legend(title='Season', fontsize=14)
+plt.tight_layout()
+plt.savefig(os.path.join(output_dir, 'seasonal_occurrences_per_eof.png'), dpi=300)
 
 # Boxplot da intensidade máxima por EOF
 plt.figure(figsize=(10, 6))
