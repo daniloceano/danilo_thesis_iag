@@ -175,7 +175,7 @@ axes[0, 0].set_ylabel('Proportion of Systems (%)', fontsize=ylabel_fontsize)
 axes[0, 0].tick_params(axis='x', labelsize=tick_labelsize)
 axes[0, 0].tick_params(axis='y', labelsize=tick_labelsize)
 axes[0, 0].legend(title=None, fontsize=legend_fontsize, bbox_to_anchor=(0.35, 1.0), ncol=3)
-axes[0, 0].set_title('(A) Genesis Proportion by Region and EOF', fontsize=title_fontsize)
+axes[0, 0].set_title('(A) Genesis Proportion by Region and EOF', fontsize=title_fontsize, fontweight='bold')
 axes[0, 0].set_xlabel('')  # Remover label do eixo X
 
 # Gráfico 2: Sazonalidade
@@ -192,7 +192,7 @@ axes[0, 1].set_ylabel('Frequency of Occurrence (%)', fontsize=ylabel_fontsize)
 axes[0, 1].tick_params(axis='x', labelsize=tick_labelsize)
 axes[0, 1].tick_params(axis='y', labelsize=tick_labelsize)
 axes[0, 1].legend(title=None, fontsize=legend_fontsize, bbox_to_anchor=(1.05, 1.0))
-axes[0, 1].set_title('(B) Seasonal Occurrences per EOF', fontsize=title_fontsize)
+axes[0, 1].set_title('(B) Seasonal Occurrences per EOF', fontsize=title_fontsize, fontweight='bold')
 axes[0, 1].set_xlabel('')  # Remover label do eixo X
 
 # Gráfico 3: Intensidade máxima por EOF (sem região)
@@ -200,7 +200,7 @@ sns.boxplot(data=cyclone_stats, x='dominant_eof', y='max_intensity', palette=pal
 axes[1, 0].set_ylabel(r'Maximum $\zeta_{850}$ ($-10^{-5}$ s$^{-1}$)', fontsize=ylabel_fontsize)
 axes[1, 0].tick_params(axis='x', labelsize=tick_labelsize)
 axes[1, 0].tick_params(axis='y', labelsize=tick_labelsize)
-axes[1, 0].set_title('(C) Maximum Intensity per EOF', fontsize=title_fontsize)
+axes[1, 0].set_title('(C) Maximum Intensity per EOF', fontsize=title_fontsize, fontweight='bold')
 axes[1, 0].set_xlabel('')  # Remover label do eixo X
 
 # Gráfico 4: Duração média por EOF (sem região)
@@ -208,7 +208,7 @@ sns.boxplot(data=cyclone_stats, x='dominant_eof', y='duration', palette=palette,
 axes[1, 1].set_ylabel('Duration (days)', fontsize=ylabel_fontsize)
 axes[1, 1].tick_params(axis='x', labelsize=tick_labelsize)
 axes[1, 1].tick_params(axis='y', labelsize=tick_labelsize)
-axes[1, 1].set_title('(D) Duration per EOF', fontsize=title_fontsize)
+axes[1, 1].set_title('(D) Duration per EOF', fontsize=title_fontsize, fontweight='bold')
 axes[1, 1].set_xlabel('')  # Remover label do eixo X
 
 # Ajustar layout e salvar a figura
