@@ -48,6 +48,13 @@ cyclone_stats = merged_data.groupby(['track_id', 'dominant_eof']).agg(
     duration=('date', lambda x: (x.max() - x.min()).total_seconds() / (3600 * 24))  # Duração em dias
 ).reset_index()
 
+# Adicionar a região de ciclogênese no cálculo das estatísticas
+cyclone_stats_by_region = merged_data.groupby(['track_id', 'dominant_eof', 'region']).agg(
+    max_intensity=('vor42', lambda x: x.max()), 
+    mean_intensity=('vor42', lambda x: x.mean()), 
+    duration=('date', lambda x: (x.max() - x.min()).total_seconds() / (3600 * 24))  # Duração em dias
+).reset_index()
+
 # Calcular o número de ciclones por EOF
 cyclone_count = cyclone_stats.groupby('dominant_eof').size().reset_index(name='cyclone_count')
 
@@ -90,53 +97,38 @@ sns.set_style("whitegrid")
 # Paletas de cores para gráficos
 palette = sns.color_palette("deep", n_colors=4)
 
-# Gráfico de sazonalidade
-plt.figure(figsize=(12, 8))
-sns.barplot(
-    data=seasonal_counts,
-    x='dominant_eof',
-    y='frequency',
-    hue='season',
-    palette=season_colors,
-    hue_order=season_order  # Aplicar a ordem das categorias
-)
+# Boxplot da intensidade máxima por EOF e região
+plt.figure(figsize=(14, 8))
+sns.boxplot(data=cyclone_stats_by_region, x='dominant_eof', y='max_intensity', hue='region', palette=palette)
 plt.xlabel('EOF', fontsize=16)
-plt.ylabel('Frequency of Occurrence (%)', fontsize=16)
+plt.ylabel(r'Maximum $\zeta_{850}$ ($-10^{-5}$ s$^{-1}$)', fontsize=16)
 plt.xticks(fontsize=14)
 plt.yticks(fontsize=14)
-plt.legend(title='Season', fontsize=14)
+plt.legend(title='Region', fontsize=12)
 plt.tight_layout()
-plt.savefig(os.path.join(output_dir, 'seasonal_occurrences_per_eof.png'), dpi=300)
+plt.savefig(os.path.join(output_dir, 'boxplot_max_intensity_per_eof_and_region.png'), dpi=300)
 
-# Boxplot da intensidade máxima por EOF
-plt.figure(figsize=(10, 6))
-sns.boxplot(data=cyclone_stats, x='dominant_eof', y='max_intensity', palette=palette)
-plt.xlabel('EOF', fontsize=16)
-plt.ylabel(r'Maximum $\zeta_{850}$  ($-10^{-5}$ s$^{-1}$)', fontsize=16)
-plt.xticks(fontsize=14)
-plt.yticks(fontsize=14)
-plt.tight_layout()
-plt.savefig(os.path.join(output_dir, 'boxplot_max_intensity_per_eof.png'), dpi=300)
-
-# Boxplot da intensidade média por EOF
-plt.figure(figsize=(10, 6))
-sns.boxplot(data=cyclone_stats, x='dominant_eof', y='mean_intensity', palette=palette)
+# Boxplot da intensidade média por EOF e região
+plt.figure(figsize=(14, 8))
+sns.boxplot(data=cyclone_stats_by_region, x='dominant_eof', y='mean_intensity', hue='region', palette=palette)
 plt.xlabel('EOF', fontsize=16)
 plt.ylabel(r'Mean $\zeta_{850}$ ($-10^{-5}$ s$^{-1}$)', fontsize=16)
 plt.xticks(fontsize=14)
 plt.yticks(fontsize=14)
+plt.legend(title='Region', fontsize=12)
 plt.tight_layout()
-plt.savefig(os.path.join(output_dir, 'boxplot_mean_intensity_per_eof.png'), dpi=300)
+plt.savefig(os.path.join(output_dir, 'boxplot_mean_intensity_per_eof_and_region.png'), dpi=300)
 
-# Boxplot da duração média por EOF
-plt.figure(figsize=(10, 6))
-sns.boxplot(data=cyclone_stats, x='dominant_eof', y='duration', palette=palette)
+# Boxplot da duração por EOF e região
+plt.figure(figsize=(14, 8))
+sns.boxplot(data=cyclone_stats_by_region, x='dominant_eof', y='duration', hue='region', palette=palette)
 plt.xlabel('EOF', fontsize=16)
 plt.ylabel('Duration (days)', fontsize=16)
 plt.xticks(fontsize=14)
 plt.yticks(fontsize=14)
+plt.legend(title='Region', fontsize=12)
 plt.tight_layout()
-plt.savefig(os.path.join(output_dir, 'boxplot_duration_per_eof.png'), dpi=300)
+plt.savefig(os.path.join(output_dir, 'boxplot_duration_per_eof_and_region.png'), dpi=300)
 
 # Gráfico de barras do número de ciclones por EOF
 plt.figure(figsize=(10, 6))
@@ -157,3 +149,71 @@ plt.xticks(rotation=0, fontsize=14)  # Ajustar rotação do eixo X
 plt.yticks(fontsize=14)
 plt.tight_layout()
 plt.savefig(os.path.join(output_dir, 'stacked_bar_genesis_proportion_per_eof.png'), dpi=300)
+
+
+# Definir tamanhos para os rótulos
+ylabel_fontsize = 18
+title_fontsize = 20
+tick_labelsize = 16
+legend_fontsize = 14
+
+# Criar figura com painel 2x2
+fig, axes = plt.subplots(2, 2, figsize=(18, 12))
+
+# Gráfico 1: Proporção por região de gênese e EOF (com Seaborn)
+proportion_melted = proportion_pivot.reset_index().melt(id_vars='dominant_eof', var_name='region', value_name='proportion')
+
+sns.barplot(
+    data=proportion_melted,
+    x='dominant_eof',
+    y='proportion',
+    hue='region',
+    palette=palette,
+    ax=axes[0, 0]
+)
+axes[0, 0].set_ylabel('Proportion of Systems (%)', fontsize=ylabel_fontsize)
+axes[0, 0].tick_params(axis='x', labelsize=tick_labelsize)
+axes[0, 0].tick_params(axis='y', labelsize=tick_labelsize)
+axes[0, 0].legend(title=None, fontsize=legend_fontsize, bbox_to_anchor=(0.35, 1.0), ncol=3)
+axes[0, 0].set_title('(A) Genesis Proportion by Region and EOF', fontsize=title_fontsize, fontweight='bold')
+axes[0, 0].set_xlabel('')  # Remover label do eixo X
+
+# Gráfico 2: Sazonalidade
+sns.barplot(
+    data=seasonal_counts,
+    x='dominant_eof',
+    y='frequency',
+    hue='season',
+    palette=season_colors,
+    hue_order=season_order,
+    ax=axes[0, 1]
+)
+axes[0, 1].set_ylabel('Frequency of Occurrence (%)', fontsize=ylabel_fontsize)
+axes[0, 1].tick_params(axis='x', labelsize=tick_labelsize)
+axes[0, 1].tick_params(axis='y', labelsize=tick_labelsize)
+axes[0, 1].legend(title=None, fontsize=legend_fontsize, bbox_to_anchor=(1.05, 1.0))
+axes[0, 1].set_title('(B) Seasonal Occurrences per EOF', fontsize=title_fontsize, fontweight='bold')
+axes[0, 1].set_xlabel('')  # Remover label do eixo X
+
+# Gráfico 3: Intensidade máxima por EOF (sem região)
+sns.boxplot(data=cyclone_stats, x='dominant_eof', y='max_intensity', palette=palette, ax=axes[1, 0])
+axes[1, 0].set_ylabel(r'Maximum $\zeta_{850}$ ($-10^{-5}$ s$^{-1}$)', fontsize=ylabel_fontsize)
+axes[1, 0].tick_params(axis='x', labelsize=tick_labelsize)
+axes[1, 0].tick_params(axis='y', labelsize=tick_labelsize)
+axes[1, 0].set_title('(C) Maximum Intensity per EOF', fontsize=title_fontsize, fontweight='bold')
+axes[1, 0].set_xlabel('')  # Remover label do eixo X
+
+# Gráfico 4: Duração média por EOF (sem região)
+sns.boxplot(data=cyclone_stats, x='dominant_eof', y='duration', palette=palette, ax=axes[1, 1])
+axes[1, 1].set_ylabel('Duration (days)', fontsize=ylabel_fontsize)
+axes[1, 1].tick_params(axis='x', labelsize=tick_labelsize)
+axes[1, 1].tick_params(axis='y', labelsize=tick_labelsize)
+axes[1, 1].set_title('(D) Duration per EOF', fontsize=title_fontsize, fontweight='bold')
+axes[1, 1].set_xlabel('')  # Remover label do eixo X
+
+# Ajustar layout e salvar a figura
+plt.tight_layout()
+output_path = os.path.join(output_dir, 'panel_2x2_eof_statistics.png')
+plt.savefig(output_path, dpi=300)
+plt.close()
+print(f'Panel saved to {output_path}')
