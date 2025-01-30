@@ -6,7 +6,7 @@
 #    By: daniloceano <danilo.oceano@gmail.com>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/08/08 20:33:08 by Danilo            #+#    #+#              #
-#    Updated: 2025/01/28 15:44:27 by daniloceano      ###   ########.fr        #
+#    Updated: 2025/01/29 11:37:24 by daniloceano      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,6 +23,8 @@ import matplotlib.colors as mcolors
 import numpy as np
 import os
 from glob import glob
+
+labels = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N']
 
 def gridlines(ax):
     gl = ax.gridlines(draw_labels=True, zorder=100, linestyle='dashed', alpha=0.5,
@@ -68,7 +70,7 @@ def plot_density(ax, fig, density, eof, region=False):
     colorbar.ax.tick_params(labelsize=12)
 
     props = dict(boxstyle='round', facecolor='white')
-    ax.text(160, -40, f"EOF {eof}", ha='right', va='bottom', fontsize=14, fontweight='bold',
+    ax.text(175, -25, f"({labels[eof - 1]}) EOF {eof}", ha='right', va='bottom', fontsize=14, fontweight='bold',
             bbox=props, zorder=101)
 
     ax.coastlines(zorder=1)
