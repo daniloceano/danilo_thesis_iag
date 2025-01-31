@@ -21,11 +21,14 @@ season_colors = {
 }
 
 # Caminhos para os arquivos
-track_path = '../../Programs_and_scripts/energetic_patterns_cyclones_south_atlantic/tracks_SAt_filtered/tracks_SAt_filtered_with_periods.csv'
-pcs_path = '../../Programs_and_scripts/energetic_patterns_cyclones_south_atlantic/csv_eofs_energetics_with_track/Total/pcs_with_dominant_eof.csv'
+PATH = '../../Programs_and_scripts/energetic_patterns_cyclones_south_atlantic'
+suffix = "refined"
+
+track_path = f'{PATH}/tracks_SAt_filtered/tracks_SAt_filtered_with_periods.csv'
+pcs_path = f'{PATH}/csv_eofs_energetics_with_track/Total/pcs_with_dominant_eof_{suffix}.csv'
 
 # Criar diretório para salvar as figuras
-output_dir = 'figures/eof_statistics'
+output_dir = f'figures/eof_statistics_{suffix}'
 os.makedirs(output_dir, exist_ok=True)
 
 # Carregar os dados
@@ -132,13 +135,20 @@ plt.savefig(os.path.join(output_dir, 'boxplot_duration_per_eof_and_region.png'),
 
 # Gráfico de barras do número de ciclones por EOF
 plt.figure(figsize=(10, 6))
-sns.barplot(data=cyclone_count, x='dominant_eof', y='cyclone_count', palette=palette)
+ax = sns.barplot(data=cyclone_count, x='dominant_eof', y='cyclone_count', palette=palette)
+for p in ax.patches: # Adicionar rótulos numéricos acima das barras
+    ax.annotate(
+        f'{int(p.get_height())}',  # Texto com o número exato de ciclones
+        (p.get_x() + p.get_width() / 2., p.get_height()),  # Posição centralizada
+        ha='center', va='bottom', fontsize=14, fontweight='bold'  # Ajuste do texto
+    )
 plt.xlabel('EOF', fontsize=16)
 plt.ylabel('Number of cyclones', fontsize=16)
 plt.xticks(fontsize=14)
 plt.yticks(fontsize=14)
 plt.tight_layout()
 plt.savefig(os.path.join(output_dir, 'barplot_cyclone_count_per_eof.png'), dpi=300)
+plt.close()
 
 # Gráfico de barras da proporção por região de gênese e EOF
 proportion_pivot.plot(kind='bar', stacked=False, figsize=(12, 8), color=palette)
