@@ -17,7 +17,7 @@ suffix = "refined"
 
 eofs_path = f"{PATH}/csv_eofs_energetics_with_track/Total/pcs_with_dominant_eof_{suffix}.csv"
 tracks_path = f"{PATH}/tracks_SAt_filtered/tracks_SAt_filtered_with_periods.csv"
-output_directory = f"figures/eof_maps_tracks_{suffix}"
+output_directory = f"figures/eof_maps_tracks"
 
 os.makedirs(output_directory, exist_ok=True)
 
@@ -91,6 +91,6 @@ for idx, (ax, eof) in enumerate(zip(axes.flat, sorted(merged_tracks["dominant_eo
 
 # Ajustar layout e salvar a figura
 plt.tight_layout()
-output_filepath = f"{output_directory}/eof_tracks_panel_by_region.png"
+output_filepath = f"{output_directory}/eof_tracks_panel_by_region_{suffix}.png"
 plt.savefig(output_filepath, dpi=300)
 print(f"Painel salvo em: {output_filepath}")

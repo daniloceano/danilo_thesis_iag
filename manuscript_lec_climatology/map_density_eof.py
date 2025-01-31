@@ -6,13 +6,9 @@
 #    By: daniloceano <danilo.oceano@gmail.com>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/08/08 20:33:08 by Danilo            #+#    #+#              #
-#    Updated: 2025/01/30 15:49:12 by daniloceano      ###   ########.fr        #
+#    Updated: 2025/01/31 14:40:32 by daniloceano      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
-
-"""
-Script to plot cyclone density for each EOF.
-"""
 
 import matplotlib.pyplot as plt
 import matplotlib as mpl
@@ -24,7 +20,7 @@ import numpy as np
 import os
 from glob import glob
 
-labels = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N']
+labels = ['A', 'B', 'C', 'D']
 
 def gridlines(ax):
     gl = ax.gridlines(draw_labels=True, zorder=100, linestyle='dashed', alpha=0.5,
@@ -36,24 +32,30 @@ def gridlines(ax):
     gl.xlabel_style = {'size': 12, 'color': '#383838'}
     gl.ylabel_style = {'size': 12, 'color': '#383838', 'rotation': 45}
 
-def plot_density(ax, fig, density, eof, suffix):
+def plot_density(ax, density, eof, suffix, label):
     datacrs = ccrs.PlateCarree()
-    
     ax.set_extent([-90, 180, -15, -90], crs=datacrs)
     lon, lat = density.lon, density.lat
     eof = int(eof)
 
+    max_density = density.max().item()  # Obtém o valor máximo da densidade
+
+    # Definir níveis de contorno
     if suffix == 'q90':
         if eof == 1:
-            levels = [0.1, 1, 2, 5, 8, 10, 15, 20, 30, 40, 50, 70, 100, 130]
+            levels = [0.1, 1, 2, 3, 4, 5, 6, 8, 10, 12, 14, 15, 16, 18]
         if eof in [2, 3]:
-            levels = [0.1, 1, 2, 5, 8, 10, 13, 15, 18, 20, 25, 30]
+            levels = [0.1, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 6, 7, 8, 9]
         elif eof == 4:
-            levels = [0.1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        elif eof == 5:
-            levels = [0.1, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4]
-        elif eof > 5:
-            levels = [0.1, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]
+            levels = [0.1, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5]
+
+    if suffix == 'q10':
+        if eof == 1:
+            levels = [0.1, 1, 2, 3, 4, 5, 6, 8, 10, 12, 14, 16, 20, 25]
+        if eof in [2, 3, 4]:
+            levels = [0.1, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 6, 7, 8, 10]
+        # elif eof == 4:
+        #     levels = [0.1, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5]
 
     elif suffix == 'refined':
         if eof == 1:
@@ -72,45 +74,48 @@ def plot_density(ax, fig, density, eof, suffix):
     ax.contour(lon, lat, density, levels=levels, norm=norm, colors='#383838',
                linewidths=0.35, linestyles='dashed', transform=datacrs)
 
-    cbar_axes = fig.add_axes([0.15, 0.26, 0.7, 0.02])
-    ticks = np.round(levels, decimals=2)
-    colorbar = plt.colorbar(cf, cax=cbar_axes, ticks=ticks, format='%g', orientation='horizontal')
-    colorbar.ax.tick_params(labelsize=12)
-
     props = dict(boxstyle='round', facecolor='white')
-    ax.text(175, -25, f"({labels[eof - 1]}) EOF {eof}", ha='right', va='bottom', fontsize=14, fontweight='bold',
+    ax.text(175, -25, f"({label}) EOF {eof}", ha='right', va='bottom', fontsize=14, fontweight='bold',
             bbox=props, zorder=101)
 
     ax.coastlines(zorder=1)
     ax.add_feature(cfeature.LAND, color='#595959', alpha=0.1)
     gridlines(ax)
 
-def generate_density_map_for_eofs(eofs_path, output_directory, suffix):
+    return cf
+
+def generate_density_panel(eofs_path, output_directory, suffix):
     eof_files = sorted(glob(os.path.join(eofs_path, "SAt_track_density_eof_*.nc")))
 
     os.makedirs(output_directory, exist_ok=True)
 
-    for eof_file in eof_files:
+    fig, axes = plt.subplots(2, 2, figsize=(14, 10), subplot_kw={"projection": ccrs.PlateCarree()})
+
+    for i, eof_file in enumerate(eof_files[:4]):  # Apenas as 4 primeiras EOFs
         eof_number = os.path.basename(eof_file).split('_')[-1].split('.')[0]
-        eof_number = float(eof_number)
         ds = xr.open_dataset(eof_file)
-        density = ds[f"EOF_{eof_number}"]
 
-        fig = plt.figure(figsize=(12, 8))
-        ax = fig.add_subplot(1, 1, 1, projection=ccrs.PlateCarree())
+        density = ds[f"EOF_{float(eof_number)}"]
 
-        plot_density(ax, fig, density, eof=eof_number, suffix=suffix)
+        row, col = divmod(i, 2)  # Determina a posição no painel
+        cf = plot_density(axes[row, col], density, eof=eof_number, suffix=suffix, label=labels[i])
 
-        fname = os.path.join(output_directory, f"density_eof_{eof_number}.png")
-        plt.savefig(fname, bbox_inches='tight')
-        plt.close()
-        print(f'Density map for EOF {eof_number} saved in {fname}')
+        # Criar colorbar individual para cada subplot logo abaixo dele
+        cbar_ax = fig.add_axes([0.12 + col * 0.47, 0.55 + row * -0.27, 0.3, 0.015])  # Posicionamento dinâmico
+        cbar = plt.colorbar(cf, cax=cbar_ax, format='%g', orientation='horizontal')
+        cbar.ax.tick_params(labelsize=10)
+
+    plt.subplots_adjust(bottom=0.15, top=0.95, left=0.05, right=0.95, hspace=-0.5, wspace=0.1)
+
+    panel_path = os.path.join(output_directory, f"density_panel_{suffix}.png")
+    plt.savefig(panel_path, bbox_inches='tight', dpi=300)
+    plt.close()
+    print(f'Density panel saved in {panel_path}')
 
 if __name__ == "__main__":
-    # Suffix options: "refined" or "q90"
-    suffix = "refined"
+    suffix = "q10"
 
     eofs_path = f"../../Programs_and_scripts/energetic_patterns_cyclones_south_atlantic/csv_eofs_energetics_with_track/Total/track_density_{suffix}"
-    output_directory = f"figures/eof_density_maps_{suffix}"
+    output_directory = f"figures/eof_density_maps"
 
-    generate_density_map_for_eofs(eofs_path, output_directory, suffix)
+    generate_density_panel(eofs_path, output_directory, suffix)

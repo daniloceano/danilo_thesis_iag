@@ -22,7 +22,7 @@ season_colors = {
 
 # Caminhos para os arquivos
 PATH = '../../Programs_and_scripts/energetic_patterns_cyclones_south_atlantic'
-suffix = "refined"
+suffix = "q10"
 
 track_path = f'{PATH}/tracks_SAt_filtered/tracks_SAt_filtered_with_periods.csv'
 pcs_path = f'{PATH}/csv_eofs_energetics_with_track/Total/pcs_with_dominant_eof_{suffix}.csv'
