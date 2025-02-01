@@ -151,19 +151,10 @@ cyclone_count_df = pd.concat([
     data["q10"]["cyclone_stats"].groupby("dominant_eof").size().reset_index(name="cyclone_count").assign(q="q10")
 ])
 
-# **Painel 2x2: Comparação de q90 vs q10 (Número de ciclones, Intensidade, Duração, Velocidade)**
-fig, axes = plt.subplots(2, 2, figsize=(18, 12))
-
-# Definir as cores personalizadas para q90 e q10
-q90_color = season_colors['DJF']  # Vermelho
-q10_color = season_colors['JJA']  # Azul
-custom_palette = [q90_color, q10_color]
-
 # **Substituir as chaves "q90" → "EOF(+)" e "q10" → "EOF(-)" no dicionário data**
 data["EOF(+)"] = data.pop("q90")
 data["EOF(-)"] = data.pop("q10")
 
-# **Variáveis a serem analisadas**
 metrics = {
     "cyclone_count": cyclone_count_df,
     "max_intensity": pd.concat([data["EOF(+)"]["cyclone_stats"].assign(q="EOF(+)"),
@@ -173,6 +164,16 @@ metrics = {
     "mean_speed": pd.concat([data["EOF(+)"]["speed_stats"].assign(q="EOF(+)"),
                              data["EOF(-)"]["speed_stats"].assign(q="EOF(-)")])
 }
+
+# **Garantir que a coluna 'q' tenha os valores corrigidos**
+for key in ["cyclone_count", "max_intensity", "duration", "mean_speed"]:
+    metrics[key]["q"] = metrics[key]["q"].replace({"q90": "EOF(+)", "q10": "EOF(-)"})
+
+# **Painel 2x2: Comparação de EOF(+) vs EOF(-)**
+fig, axes = plt.subplots(2, 2, figsize=(18, 12))
+
+# Definir a paleta de cores com rótulos corrigidos
+custom_palette = {"EOF(+)": season_colors['DJF'], "EOF(-)": season_colors['JJA']}
 
 # Loop para gerar cada subplot
 for i, (var, df) in enumerate(metrics.items()):
@@ -197,16 +198,17 @@ for i, (var, df) in enumerate(metrics.items()):
     # **Configuração de título, eixos e rótulos**
     ax.set_title(f'({chr(65 + i)}) {var.replace("_", " ").title()} EOF(+) vs EOF(-)', 
                  fontsize=title_fontsize, fontweight='bold')
-    ax.set_xlabel("EOF", fontsize=ylabel_fontsize)  # **Adicionar "EOF" como rótulo do eixo X**
+    ax.set_xlabel("EOF", fontsize=ylabel_fontsize)
     ax.set_ylabel(var.replace("_", " ").title(), fontsize=ylabel_fontsize)
     ax.tick_params(axis='x', labelsize=tick_labelsize)
     ax.tick_params(axis='y', labelsize=tick_labelsize)
 
-    # **Manter a legenda apenas no primeiro gráfico**
+    # **Manter a legenda apenas no primeiro gráfico e corrigir os rótulos e cores**
     if i == 0:
-        ax.legend(title=None, fontsize=legend_fontsize, loc="upper right", labels=["EOF(+)", "EOF(-)"])
+        handles, labels = ax.get_legend_handles_labels()
+        ax.legend(handles, ["EOF(+)", "EOF(-)"], title=None, fontsize=legend_fontsize, loc="upper right")
     else:
-        ax.legend_.remove()  # Remover legenda dos outros gráficos
+        ax.legend_.remove()
 
 plt.tight_layout()
 plt.savefig(os.path.join(output_dir, 'panel_2x2_metrics_q90_vs_q10.png'), dpi=300)
