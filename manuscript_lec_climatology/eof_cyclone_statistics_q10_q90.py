@@ -69,12 +69,17 @@ for suffix in suffixes:
         elif month in [6, 7, 8]: return 'JJA'
         elif month in [9, 10, 11]: return 'SON'
 
-    merged_data['season'] = merged_data['date'].dt.month.apply(get_season)
-    seasonal_counts = merged_data.groupby(['dominant_eof', 'season']).size().reset_index(name='count')
+
+
+    # Contar ocorrências por EOF e estação considerando apenas a gênese
+    first_occurrence = merged_data.groupby('track_id').first().reset_index()
+    first_occurrence['season'] = first_occurrence['date'].dt.month.apply(get_season)
+    seasonal_counts = first_occurrence.groupby(['dominant_eof', 'season']).size().reset_index(name='count')
     seasonal_counts['season'] = pd.Categorical(seasonal_counts['season'], categories=['DJF', 'MAM', 'JJA', 'SON'], ordered=True)
     total_counts_per_eof = seasonal_counts.groupby('dominant_eof')['count'].sum().reset_index(name='total_count')
     seasonal_counts = seasonal_counts.merge(total_counts_per_eof, on='dominant_eof')
     seasonal_counts['frequency'] = (seasonal_counts['count'] / seasonal_counts['total_count']) * 100
+
 
     # Estatísticas por EOF
     cyclone_stats = merged_data.groupby(['track_id', 'dominant_eof']).agg(
