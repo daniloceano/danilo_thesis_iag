@@ -67,6 +67,9 @@ seasonal_counts = clusters_seasonality_df.groupby(['cluster', 'season']).size().
 # Contagem de sistemas por região de gênese para cada cluster
 genesis_counts = clusters_seasonality_df.groupby(['cluster', 'region']).size().unstack(fill_value=0)
 
+# Criar DataFrame com a contagem de ciclones por estação e região de gênese para cada cluster
+seasonal_genesis_counts = clusters_seasonality_df.groupby(['cluster', 'region', 'season']).size().unstack(fill_value=0)
+
 # Intensidade máxima (vor42) dos sistemas por cluster
 intensity_df = filtered_tracks_df.groupby('track_id')['vor42'].max().reset_index()
 intensity_df = intensity_df.merge(clusters_df[['track_id', 'cluster']], on='track_id', how='left')
@@ -138,3 +141,40 @@ ax_growth.tick_params(axis='y', labelsize=tick_labelsize)
 # Salvar figura da taxa de crescimento médio
 plt.tight_layout()
 plt.savefig(f"{output_dir}/growth_rate_intensification.png", dpi=300)
+
+# Plotar o primeiro painel com todos os clusters combinados
+all_clusters_counts = clusters_seasonality_df.groupby(['region', 'season']).size().unstack(fill_value=0)
+all_clusters_counts.plot(kind='bar', ax=axes[0, 0], color=season_colors)
+
+# Criar a figura com 2x3 subplots (com eixos independentes)
+fig, axes = plt.subplots(2, 3, figsize=(18, 12), sharey=False)
+
+# 1️⃣ **Painel geral (Todos os clusters combinados)**
+all_clusters_counts.plot(kind='bar', ax=axes[0, 0], color=season_colors)
+
+axes[0, 0].set_title("(A) Genesis Seasonality - All Clusters", fontsize=title_fontsize, fontweight='bold')
+axes[0, 0].set_xlabel('Genesis Region', fontsize=ylabel_fontsize)
+axes[0, 0].set_ylabel('Total Number of Systems', fontsize=ylabel_fontsize)
+axes[0, 0].tick_params(axis='x', labelsize=tick_labelsize, rotation=0)
+axes[0, 0].tick_params(axis='y', labelsize=tick_labelsize)
+axes[0, 0].legend(title="Season", fontsize=legend_fontsize, title_fontsize=legend_fontsize)
+
+# 2️⃣ **Painéis individuais para cada cluster**
+cluster_list = sorted(seasonal_genesis_counts.index.get_level_values('cluster').unique())
+
+for i, cluster in enumerate(cluster_list):
+    row, col = divmod(i + 1, 3)  # Ajusta a posição dos painéis
+    if cluster in seasonal_genesis_counts.index:
+        seasonal_genesis_counts.loc[cluster].plot(kind='bar', ax=axes[row, col], color=season_colors)
+
+    axes[row, col].set_title(f"(B) Genesis Seasonality - Cluster {cluster}", fontsize=title_fontsize, fontweight='bold')
+    axes[row, col].set_xlabel('Genesis Region', fontsize=ylabel_fontsize)
+    axes[row, col].set_ylabel('Total Number of Systems', fontsize=ylabel_fontsize)
+    axes[row, col].tick_params(axis='x', labelsize=tick_labelsize, rotation=0)
+    axes[row, col].tick_params(axis='y', labelsize=tick_labelsize)
+    axes[row, col].legend().set_visible(False)  # Remover legendas duplicadas
+
+# Ajustar layout e salvar figura
+plt.tight_layout()
+plt.savefig(f"{output_dir}/genesis_seasonality_panel.png", dpi=300)
+plt.show()
