@@ -64,11 +64,20 @@ cluster_counts = clusters_df['cluster'].value_counts().sort_index()
 # Contagem sazonal por cluster
 seasonal_counts = clusters_seasonality_df.groupby(['cluster', 'season']).size().unstack(fill_value=0)
 
+# Normalizar os valores para que cada cluster tenha 100% de distribuição entre as estações do ano
+seasonal_counts = seasonal_counts.div(seasonal_counts.sum(axis=1), axis=0) * 100
+
 # Contagem de sistemas por região de gênese para cada cluster
 genesis_counts = clusters_seasonality_df.groupby(['cluster', 'region']).size().unstack(fill_value=0)
 
+# Normalizar os valores para que cada cluster tenha 100% de distribuição entre as regiões de gênese
+genesis_counts = genesis_counts.div(genesis_counts.sum(axis=1), axis=0) * 100
+
 # Criar DataFrame com a contagem de ciclones por estação e região de gênese para cada cluster
 seasonal_genesis_counts = clusters_seasonality_df.groupby(['cluster', 'region', 'season']).size().unstack(fill_value=0)
+
+# Normalizar os valores para que cada cluster tenha 100% de distribuição entre as estações dentro de cada região de gênese
+seasonal_genesis_counts = seasonal_genesis_counts.div(seasonal_genesis_counts.sum(axis=1), axis=0) * 100
 
 # Intensidade máxima (vor42) dos sistemas por cluster
 intensity_df = filtered_tracks_df.groupby('track_id')['vor42'].max().reset_index()
