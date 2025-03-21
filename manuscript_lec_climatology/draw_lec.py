@@ -6,7 +6,7 @@
 #    By: daniloceano <danilo.oceano@gmail.com>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/03 23:31:13 by daniloceano       #+#    #+#              #
-#    Updated: 2025/03/21 00:04:10 by daniloceano      ###   ########.fr        #
+#    Updated: 2025/03/21 10:14:14 by daniloceano      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -288,7 +288,7 @@ def plot_term_arrows(ax, size, term, data, normalized_data, positions, phase):
     displacement = base_displacement + log_displacement * max_displacement_factor
 
     # Deslocamento para as setas de cada fase
-    if term not in ["Ge", "RKz", "Ge", "RKe", "Ca", "Ck"]:
+    if term not in ["Ge", "Gz", "RKz", "RKe", "Ca", "Ck"]:
         phase_displacement = {
             'incipient': displacement * 1.5,         
             'intensification': displacement * 0.5,   
@@ -302,13 +302,6 @@ def plot_term_arrows(ax, size, term, data, normalized_data, positions, phase):
             'mature': displacement * 0.5,           
             'decay': displacement * 1.5            
         }
-
-    phase_colors = {
-        'incipient': 'blue',
-        'intensification': 'orange',
-        'mature': 'red',
-        'decay': 'green'
-    }
 
     displacement = phase_displacement.get(phase, 0)  # Deslocamento baseado na fase
 
@@ -362,13 +355,7 @@ def plot_term_arrows(ax, size, term, data, normalized_data, positions, phase):
 
     return start, end
 
-def _plotter(
-    phase_means,
-    normalized_data_not_energy,
-    figures_directory,
-    plot_example=False,
-    app_logger=False,
-):
+def _plotter(phase_means, normalized_data_not_energy):
     
     conversions = TERM_DETAILS["conversion"]["terms"]
     residuals = TERM_DETAILS["residuals"]["terms"]
@@ -417,19 +404,7 @@ def _plotter(
     # Adicionar legenda com cores das fases
     plot_legend(ax)
 
-    figures_subdirectory = os.path.join(figures_directory, "draw_LEC")
-    os.makedirs(figures_subdirectory, exist_ok=True)
-    figure_path = os.path.join(figures_subdirectory, f"LEC_test.png")
-    plt.savefig(figure_path)
-    plt.close()
-    (
-        app_logger.info(f"Lorenz cycle plot saved to {figure_path}")
-        if app_logger
-        else print(f"Lorenz cycle plot saved to {figure_path}")
-    )
-
-
-def plot_period_means(periods_df, figures_directory):
+def plot_period_means(periods_df, normalization_type="log"):
 
     # Selecionar apenas fases do primeiro ciclo de vdia
     periods_df = periods_df.loc[['incipient', 'intensification', 'mature', 'decay']]
@@ -451,17 +426,32 @@ def plot_period_means(periods_df, figures_directory):
         period_means_df.drop(columns=["Az", "Ae", "Kz", "Ke", 'BΦE', 'BΦZ'])
     )
 
-    normalized_data_log = np.log1p(df_not_energy_periods)
+    if normalization_type == "min_max":
+        # Min max normalization
+        normalized_data = (df_not_energy_periods - df_not_energy_periods.min()) / (
+            df_not_energy_periods.max() - df_not_energy_periods.min()
+        )
+
+    if normalization_type == "log":
+        # Log normalization
+        normalized_data = np.log1p(df_not_energy_periods)
 
     # Plot period means
-    _plotter(period_means_df, normalized_data_log, figures_directory)
+    _plotter(period_means_df, normalized_data)
 
 
-def plot_lorenzcycletoolkit(periods_df, figures_directory):
+def plot_lorenzcycletoolkit(periods_df, figures_directory, normalization_type="log"):
 
     # Rename columns by removing "(finite diff.)"
     periods_df = periods_df.rename(columns=lambda x: x.replace(" (finite diff.)", ""))
-    plot_period_means(periods_df, figures_directory)
+    plot_period_means(periods_df, normalization_type)
+
+    figures_subdirectory = os.path.join(figures_directory, "draw_LEC")
+    os.makedirs(figures_subdirectory, exist_ok=True)
+    figure_path = os.path.join(figures_subdirectory, f"LEC_total.png")
+    plt.savefig(figure_path)
+    plt.close()
+    print(f"Lorenz cycle plot saved to {figure_path}")
 
 if __name__ == "__main__":
     # Test for Reg1-Representative_fixed
