@@ -6,7 +6,7 @@
 #    By: daniloceano <danilo.oceano@gmail.com>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/03 23:31:13 by daniloceano       #+#    #+#              #
-#    Updated: 2025/03/20 19:29:53 by daniloceano      ###   ########.fr        #
+#    Updated: 2025/03/21 00:04:10 by daniloceano      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,6 +19,17 @@ import numpy as np
 import pandas as pd
 # from pdfs import read_life_cycles
 
+COLOR_PHASES = {
+    'Total': '#1d3557',
+    'incipient': '#65a1e6',
+    'intensification': '#f7b538',
+    'intensification 2': '#ca6702',
+    'mature': '#d62828',
+    'mature 2': '#9b2226',
+    'decay': '#9aa981',
+    'decay 2': '#386641',
+}
+
 def read_life_cycles(base_path):
     """
     Reads all CSV files in the specified directory and collects DataFrame for each system.
@@ -27,7 +38,7 @@ def read_life_cycles(base_path):
 
     from tqdm import tqdm
 
-    files = os.listdir(base_path)[:100]
+    files = os.listdir(base_path)
 
     for filename in tqdm(files, desc="Reading CSV files"):
         if filename.endswith('.csv'):
@@ -86,61 +97,92 @@ TERM_DETAILS = {
     },
 }
 
-def plot_boxes(ax, data, normalized_data, positions, size, plot_example=False):
-    # Define edge width range
-    min_edge_width = 0
-    max_edge_width = 5
-
+def plot_boxes(ax, positions, size):
     # Create energy boxes and text labels with updated terms
     for term, pos in positions.items():
-        term_value = data[term]
-
-        # Get normalized value for the term to determine edge width
-        normalized_value = normalized_data[term]
-        # Scale edge width based on normalized value
-        edge_width = (
-            min_edge_width + (max_edge_width - min_edge_width) * normalized_value / 10
-        )
-
-        # Determine value text color based on term value
-        value_text_color = "#386641"  # Dark green for positive values
-        if term_value < 0:
-            value_text_color = "#ae2012"  # Dark red for negative values
-
+        # Draw circles for energy terms
         circle = patches.Circle(
-            (pos[0], pos[1]), radius=size / 2, fill=True, color="skyblue", ec="black", linewidth=edge_width
+            (pos[0], pos[1]), radius=size / 2, fill=True, color="skyblue", ec="black", linewidth=2, alpha=0.2
         )
         ax.add_patch(circle)
 
-        # Value text in the specified color
+        # Plot the term name in the center of each circle
         ax.text(
-            pos[0],
-            pos[1],
-            f"{term_value:.2f}",
-            ha="center",
-            va="center",
-            fontsize=16,
-            color=value_text_color,
-            fontweight="bold",
+            pos[0], pos[1], term, ha="center", va="center", fontsize=16, color="black", fontweight="bold"
         )
 
-def plot_arrow(ax, start, end, term_value, normalized_value, term, color="#5C5850"):
+def write_terms(ax):
+
+    # Termos de conversão
+    ax.text(
+        -0.25, 0, "Ca", ha="center", va="center", fontsize=16, color="black", fontweight="bold"
+        )
+    ax.text(
+        0.25, 0, "Ck", ha="center", va="center", fontsize=16, color="black", fontweight="bold"
+        )
+    ax.text(
+        0, -0.25, "Ce", ha="center", va="center", fontsize=16, color="black", fontweight="bold"
+        )
+    ax.text(
+        0, 0.25, "Cz", ha="center", va="center", fontsize=16, color="black", fontweight="bold"
+        )
+    
+    # Termos de geração/resíduo
+    ax.text(
+        -0.5, 1.1, "Gz", ha="center", va="center", fontsize=16, color="black", fontweight="bold"
+        )
+    ax.text(
+        -0.5, -1.1, "Ge", ha="center", va="center", fontsize=16, color="black", fontweight="bold"
+        )
+    ax.text(
+        0.5, 1.1, "RKz", ha="center", va="center", fontsize=16, color="black", fontweight="bold"
+        )
+    ax.text(
+        0.5, -1.1, "RKe", ha="center", va="center", fontsize=16, color="black", fontweight="bold"
+        )
+    
+    # Termos de fronteira
+    ax.text(
+        -1.1, 0.5, "BAz", ha="center", va="center", fontsize=16, color="black", fontweight="bold"
+        )
+    ax.text(
+        -1.1, -0.5, "BAe", ha="center", va="center", fontsize=16, color="black", fontweight="bold"
+        )
+    ax.text(
+        1.1, 0.5, "BKz", ha="center", va="center", fontsize=16, color="black", fontweight="bold"
+        )
+    ax.text(
+        1.1, -0.5, "BKe", ha="center", va="center", fontsize=16, color="black", fontweight="bold"
+        )
+
+
+def plot_arrow(ax, start, end, term_value, normalized_value, term, phase):
     """
     Desenha uma seta ou linha curva entre start e end dependendo do tipo de termo.
     Agora a espessura da seta é baseada na intensidade normalizada do fluxo.
     """
+    color = COLOR_PHASES[phase]
 
+    # Definir o tamanho da seta
     size = 5 * normalized_value
+    if size < 1:
+        size = 1
+
+    # Inverter começo e fim se term_value for negativo
+    if term_value < 0:
+        start, end = end, start
 
     # Se for um termo de conversão (como "Ca", "Ck"), desenhar uma linha curva
     if term in ["Ca", "Ck", "Ce", "Cz"]:
         # Curvatura baseada no valor do termo
-        curvature = 0.2
+        curvature = 0.2 if term_value > 0 else -0.2
+        # Inverter para Cz
         if term == "Cz":
-            curvature = - 0.2
+            curvature *= -1
+
         arrow = FancyArrowPatch(
             start, end, connectionstyle=f"arc3,rad={curvature}",
-            arrowstyle='->', color=color, mutation_scale=50, lw=size
+            arrowstyle='->', color=color, mutation_scale=50, lw=size, alpha=0.9
         )
         ax.add_patch(arrow)
         
@@ -156,85 +198,84 @@ def plot_arrow(ax, start, end, term_value, normalized_value, term, color="#5C585
                 width=size,
                 headwidth=size * 3,
                 headlength=size * 3,
+                alpha=0.8
             ),
         )
 
-def plot_term_text_and_value(
-    ax, start, end, term, term_value, offset=(0, 0), plot_example=False
-):
-    # Determine text color based on term value
-    text_color = "#386641"
-    if term_value < 0:
-        text_color = "#ae2012"
+def plot_signal(ax, positions, phase, data, normalized_data, term):
+    """
+    Plota o sinal "+" ou "-" dentro dos círculos para termos de balanço de energia.
+    """
 
-    mid_point = (
-        (start[0] + end[0]) / 2 + offset[0],
-        (start[1] + end[1]) / 2 + offset[1],
-    )
+    # Definir o tamanho da seta
+    normalized_value = normalized_data[term]
+    size = 20 * normalized_value
+    if size < 20:
+        size = 20
+    elif size > 50:
+        size = 50
 
-    if term in ["Ca", "BAz", "BAe"]:
-        offset_x = -0.05
-    elif term in ["Ck", "BKz", "BKe"]:
-        offset_x = 0.05
-    else:
-        offset_x = 0
+    # Obtenha o valor do termo e defina a cor
+    term_value = data[term]
+    color = COLOR_PHASES[phase]
 
-    if term == "Ce":
-        offset_y = -0.05
-    elif term == "Cz":
-        offset_y = 0.05
-    else:
-        offset_y = 0
+    # Colocar offset para cada fase
+    offset_value = 0.1
+    offset = {
+        'incipient': (-offset_value, offset_value),
+        'intensification': (offset_value, offset_value),
+        'mature': (-offset_value, -offset_value),
+        'decay': (offset_value, -offset_value),
+    }
 
-    x_pos = mid_point[0] + offset_x
-    y_pos = mid_point[1] + offset_y
+    # Verificar se é um termo de balanço de energia
+    pos = positions[term]
 
-    # Plot term text in bold black
-    if plot_example:
-        ax.text(
-            x_pos,
-            y_pos,
-            term,
-            ha="center",
-            va="center",
-            fontsize=16,
-            color="k",
-            fontweight="bold",
-        )
-
-    # Plot value text in the specified color
-    else:
-        ax.text(
-            x_pos,
-            y_pos,
-            f"{term_value:.2f}",
-            ha="center",
-            va="center",
-            color=text_color,
-            fontsize=16,
-            fontweight="bold",
-        )
-
-
-def plot_term_value(ax, position, value, offset=(0, 0)):
+    # Definir o símbolo "+" ou "-"
+    symbol = "+" if term_value >= 0 else "-"
+    
+    # Verificar se o deslocamento está sendo aplicado corretamente
     ax.text(
-        position[0] + offset[0],
-        position[1] + offset[1],
-        f"{value:.2f}",
+        pos[0] + offset[phase][0],  # Deslocamento no eixo X
+        pos[1] + offset[phase][1],  # Deslocamento no eixo Y
+        symbol,
         ha="center",
         va="center",
-        fontsize=16,
+        fontsize=size,
+        color=color,
+        fontweight="bold",
     )
 
+import matplotlib.lines as mlines
 
-def plot_term_arrows_and_text(ax, size, term, data, normalized_data, positions, phase):
+def plot_legend(ax):
+    """
+    Adiciona a legenda de cores para cada fase no gráfico.
+    """
+    legend_elements = [
+        mlines.Line2D([0], [0], color=COLOR_PHASES['incipient'], lw=4, label='Incipient'),
+        mlines.Line2D([0], [0], color=COLOR_PHASES['intensification'], lw=4, label='Intensification'),
+        mlines.Line2D([0], [0], color=COLOR_PHASES['mature'], lw=4, label='Mature'),
+        mlines.Line2D([0], [0], color=COLOR_PHASES['decay'], lw=4, label='Decay'),
+    ]
+    
+    ax.legend(
+        handles=legend_elements, 
+        loc='upper left',  # Posição do canto superior esquerdo
+        fontsize=12,
+        title_fontsize=14,
+        bbox_to_anchor=(0, -0.055),
+        ncol=4
+    )
+
+def plot_term_arrows(ax, size, term, data, normalized_data, positions, phase):
 
     # Obtenha o valor do termo e o valor normalizado
     term_value = data[term]
     normalized_value = normalized_data[term]
 
     # Definir um valor base para o deslocamento
-    base_displacement = 0.05
+    base_displacement = 0.1
 
     # Usar o valor absoluto para determinar o deslocamento (quanto maior o valor, maior o deslocamento)
     max_displacement_factor = 0.01  # Ajuste esse fator conforme necessário para o máximo de deslocamento
@@ -247,12 +288,20 @@ def plot_term_arrows_and_text(ax, size, term, data, normalized_data, positions, 
     displacement = base_displacement + log_displacement * max_displacement_factor
 
     # Deslocamento para as setas de cada fase
-    phase_displacement = {
-        'incipient': displacement * 1,         # Mais afastado na fase incipiente
-        'intensification': displacement * 0,   # Moderado para intensificação
-        'mature': displacement * -1,           # Sem deslocamento para a fase madura
-        'decay': displacement * -2            # Afastamento negativo para a fase decay
-    }
+    if term not in ["Ge", "RKz", "Ge", "RKe", "Ca", "Ck"]:
+        phase_displacement = {
+            'incipient': displacement * 1.5,         
+            'intensification': displacement * 0.5,   
+            'mature': displacement * -0.5,           
+            'decay': displacement * -1.5            
+        }
+    else:
+        phase_displacement = {
+            'incipient': displacement * -1.5,         
+            'intensification': displacement * -0.5,   
+            'mature': displacement * 0.5,           
+            'decay': displacement * 1.5            
+        }
 
     phase_colors = {
         'incipient': 'blue',
@@ -308,11 +357,10 @@ def plot_term_arrows_and_text(ax, size, term, data, normalized_data, positions, 
         start = (1, positions[refered_term][1] + displacement)
         end = (positions[refered_term][0] + size / 2, positions[refered_term][1] + displacement / 2)
 
-    # Plot text and arrows
-    plot_arrow(ax, start, end, term_value, normalized_value, term, color=phase_colors[phase])
+    # Plot arrows and signals
+    plot_arrow(ax, start, end, term_value, normalized_value, term, phase)
 
     return start, end
-
 
 def _plotter(
     phase_means,
@@ -325,6 +373,7 @@ def _plotter(
     conversions = TERM_DETAILS["conversion"]["terms"]
     residuals = TERM_DETAILS["residuals"]["terms"]
     boundaries = TERM_DETAILS["boundary"]["terms"]
+    budget = ["∂Az/∂t", "∂Ae/∂t", "∂Kz/∂t", "∂Ke/∂t"]
     
     fig, ax = plt.subplots(figsize=(8, 8))
     ax.set_xlim(-1, 1)
@@ -343,7 +392,8 @@ def _plotter(
     data = phase_means.iloc[0]
     normalized_data = normalized_data_not_energy.iloc[0]
 
-    plot_boxes(ax, data, normalized_data, positions, size, plot_example)
+    plot_boxes(ax, positions, size)
+    write_terms(ax)
 
     for phase, data in phase_means.iterrows():
 
@@ -355,10 +405,17 @@ def _plotter(
         normalized_data = normalized_data_not_energy.loc[phase]
 
         # Plot the Lorenz cycle for the day
-        for term in conversions + residuals + boundaries:
-            start, end = plot_term_arrows_and_text(
-                ax, size, term, data, normalized_data, positions, phase
-            )
+        for term in conversions + residuals + boundaries + budget:
+            print(f"Plotting {term}")
+
+            is_balance_term = term in ["∂Az/∂t", "∂Ae/∂t", "∂Kz/∂t", "∂Ke/∂t"]
+            if is_balance_term:
+                plot_signal(ax, positions, phase, data, normalized_data, term)
+            else:
+                plot_term_arrows(ax, size, term, data, normalized_data, positions, phase)
+
+    # Adicionar legenda com cores das fases
+    plot_legend(ax)
 
     figures_subdirectory = os.path.join(figures_directory, "draw_LEC")
     os.makedirs(figures_subdirectory, exist_ok=True)
@@ -374,6 +431,12 @@ def _plotter(
 
 def plot_period_means(periods_df, figures_directory):
 
+    # Selecionar apenas fases do primeiro ciclo de vdia
+    periods_df = periods_df.loc[['incipient', 'intensification', 'mature', 'decay']]
+
+    # Renome columns by removing "(finite diff.)"
+    periods_df = periods_df.rename(columns=lambda x: x.replace(" (finite diff.)", ""))
+
     # Initialize an empty DataFrame to store period means
     period_means_df = pd.DataFrame()
 
@@ -387,11 +450,7 @@ def plot_period_means(periods_df, figures_directory):
     df_not_energy_periods = np.abs(
         period_means_df.drop(columns=["Az", "Ae", "Kz", "Ke", 'BΦE', 'BΦZ'])
     )
-    # normalized_data_not_energy_periods = (
-    #     df_not_energy_periods - df_not_energy_periods.min().mean()
-    # ) / (df_not_energy_periods.max().max() - df_not_energy_periods.min().min())
 
-    normalized_data_not_energy_periods = (df_not_energy_periods - df_not_energy_periods.mean()) / df_not_energy_periods.std()
     normalized_data_log = np.log1p(df_not_energy_periods)
 
     # Plot period means
