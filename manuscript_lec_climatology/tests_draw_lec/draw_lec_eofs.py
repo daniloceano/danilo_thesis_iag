@@ -6,7 +6,7 @@
 #    By: daniloceano <danilo.oceano@gmail.com>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/03 23:31:13 by daniloceano       #+#    #+#              #
-#    Updated: 2025/03/21 10:11:34 by daniloceano      ###   ########.fr        #
+#    Updated: 2025/03/24 07:48:52 by daniloceano      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from glob import glob
-from draw_lec import plot_period_means
+from tests_draw_lec.draw_lec_v1 import plot_period_means
 
 def load_eofs_data(base_path, results_path):
     """

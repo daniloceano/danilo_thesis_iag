@@ -1,12 +1,12 @@
 # **************************************************************************** #
 #                                                                              #
 #                                                         :::      ::::::::    #
-#    draw_lec_arrow_length.py                           :+:      :+:    :+:    #
+#    draw_lec_v6.py                                     :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
 #    By: daniloceano <danilo.oceano@gmail.com>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/03 23:31:13 by daniloceano       #+#    #+#              #
-#    Updated: 2025/03/21 15:37:18 by daniloceano      ###   ########.fr        #
+#    Updated: 2025/03/24 09:40:49 by daniloceano      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,6 @@ from matplotlib.patches import FancyArrowPatch
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-# from pdfs import read_life_cycles
 
 COLOR_PHASES = {
     'Total': '#1d3557',
@@ -38,7 +37,7 @@ def read_life_cycles(base_path):
 
     from tqdm import tqdm
 
-    files = os.listdir(base_path)[:100]
+    files = os.listdir(base_path)#[:100]
 
     for filename in tqdm(files, desc="Reading CSV files"):
         if filename.endswith('.csv'):
@@ -164,7 +163,9 @@ def plot_arrow(ax, start, end, term_value, normalized_value, term, phase):
     color = COLOR_PHASES[phase]
 
     # Definir o tamanho da seta
-    size = 5
+    size = 5 * normalized_value
+    if size < 1:
+        size = 1
 
     # Inverter começo e fim se term_value for negativo
     if term_value < 0:
@@ -177,28 +178,16 @@ def plot_arrow(ax, start, end, term_value, normalized_value, term, phase):
         # Inverter para Cz
         if term == "Cz":
             curvature *= -1
-
-        arrow = FancyArrowPatch(
-            start, end, connectionstyle=f"arc3,rad={curvature}",
-            arrowstyle='->', color=color, mutation_scale=50, lw=size, alpha=0.9
-        )
-        ax.add_patch(arrow)
-        
+    
     else:
-        # Para outros termos, desenhar seta reta
-        ax.annotate(
-            "",
-            xy=end,
-            xytext=start,
-            arrowprops=dict(
-                facecolor=color,
-                edgecolor=color,
-                width=size,
-                headwidth=size * 3,
-                headlength=size * 3,
-                alpha=0.8
-            ),
-        )
+        curvature = 0
+
+    arrow = FancyArrowPatch(
+        start, end, connectionstyle=f"arc3,rad={curvature}",
+        arrowstyle='->', color=color, mutation_scale=50, lw=size, alpha=0.9
+    )
+    ax.add_patch(arrow)
+        
 
 def plot_signal(ax, positions, phase, data, normalized_data, term):
     """
@@ -302,42 +291,39 @@ def plot_term_arrows(ax, size, term, data, normalized_data, positions, phase):
         }
 
     displacement = phase_displacement.get(phase, 0)  # Deslocamento baseado na fase
+    size += 0.1
 
-    # Obter a magnitude do termo (valores absolutos) para ajustar o tamanho da seta
-    magnitude = np.abs(normalized_data[term]) / 2
-
-    # Ajustar o início e o fim das setas com base na magnitude
+    # Definir posições e condições para cada termo
     if term == "Cz":
-        # Cz é horizontal (ajustar o eixo X)
-        start = ((positions["∂Az/∂t"][0] + size / 2) * (magnitude), positions["∂Az/∂t"][1] + displacement)
-        end = ((positions["∂Kz/∂t"][0] - size / 2) * (magnitude), positions["∂Kz/∂t"][1] + displacement)
+        start = (positions["∂Az/∂t"][0] + size / 2, positions["∂Az/∂t"][1] + displacement)
+        end = (positions["∂Kz/∂t"][0] - size / 2, positions["∂Kz/∂t"][1] + displacement)
 
     elif term == "Ca":
-        # Ca é vertical (ajustar o eixo Y)
-        start = (positions["∂Az/∂t"][0] + displacement, (positions["∂Az/∂t"][1] - size / 2) * (magnitude))
-        end = (positions["∂Ae/∂t"][0] + displacement, (positions["∂Ae/∂t"][1] + size / 2) * (magnitude))
+        start = (positions["∂Az/∂t"][0] + displacement, positions["∂Az/∂t"][1] - size / 2)
+        end = (positions["∂Ae/∂t"][0] + displacement, positions["∂Ae/∂t"][1] + size / 2)
 
     elif term == "Ck":
-        start = (positions["∂Kz/∂t"][0] + displacement, (positions["∂Ke/∂t"][1] + size / 2) * (magnitude))
-        end = (positions["∂Ke/∂t"][0] + displacement, (positions["∂Kz/∂t"][1] - size / 2) * (magnitude))
+        start = (positions["∂Kz/∂t"][0] + displacement, positions["∂Ke/∂t"][1] + size / 2)
+        end = (positions["∂Ke/∂t"][0] + displacement, positions["∂Kz/∂t"][1] - size / 2)
 
     elif term == "Ce":
-        start = ((positions["∂Ae/∂t"][0] + size / 2) * (magnitude), positions["∂Ke/∂t"][1] + displacement)
-        end = ((positions["∂Ke/∂t"][0] - size / 2) * (magnitude), positions["∂Ae/∂t"][1] + displacement)
-
+        start = (positions["∂Ae/∂t"][0] + size / 2, positions["∂Ke/∂t"][1] + displacement)
+        end = (positions["∂Ke/∂t"][0] - size / 2, positions["∂Ae/∂t"][1] + displacement)
 
     # Plot text for residuals
     elif term == "Gz":
-        start = (positions["∂Az/∂t"][0] + displacement, 1)
-        end = (positions["∂Az/∂t"][0] + displacement / 2, positions["∂Az/∂t"][1] + size / 2)
+        offset = 0.02
+        start = (positions["∂Az/∂t"][0] + displacement, 1 - offset)
+        end = (positions["∂Az/∂t"][0] + displacement / 2, (positions["∂Az/∂t"][1] + size / 2) - offset)
 
     elif term == "Ge":
         start = (positions["∂Ae/∂t"][0] + displacement, -1)
         end = (positions["∂Ae/∂t"][0] + displacement / 2, positions["∂Ae/∂t"][1] - size / 2)
 
     elif term == "RKz":
-        start = (positions["∂Kz/∂t"][0] + displacement, 1)
-        end = (positions["∂Kz/∂t"][0] + displacement / 2, positions["∂Kz/∂t"][1] + size / 2)
+        offset = 0.02
+        start = (positions["∂Kz/∂t"][0] + displacement, 1 - offset)
+        end = (positions["∂Kz/∂t"][0] + displacement / 2, (positions["∂Kz/∂t"][1] + size / 2) - offset)
 
     elif term == "RKe":
         start = (positions["∂Ke/∂t"][0] + displacement, -1)
@@ -346,8 +332,9 @@ def plot_term_arrows(ax, size, term, data, normalized_data, positions, phase):
     # Plot text for boundaries
     elif term in ["BAz", "BAe"]:
         refered_term = "∂Az/∂t" if term == "BAz" else "∂Ae/∂t"
-        start = (-1 * (magnitude * 10), positions[refered_term][1] + displacement)
-        end = ((positions[refered_term][0] - size / 2), positions[refered_term][1] + displacement / 2)
+        offset = 0.02
+        start = (-1 + offset, positions[refered_term][1] + displacement)
+        end = ((positions[refered_term][0] - size / 2) + offset, positions[refered_term][1] + displacement / 2)
 
     elif term in ["BKz", "BKe"]:
         refered_term = "∂Kz/∂t" if term == "BKz" else "∂Ke/∂t"
@@ -452,7 +439,7 @@ def plot_lorenzcycletoolkit(periods_df, figures_directory, normalization_type="l
 
     figures_subdirectory = os.path.join(figures_directory, "draw_LEC")
     os.makedirs(figures_subdirectory, exist_ok=True)
-    figure_path = os.path.join(figures_subdirectory, f"LEC_total_arrow_length.png")
+    figure_path = os.path.join(figures_subdirectory, f"LEC_total_v6.png")
     plt.savefig(figure_path)
     plt.close()
     print(f"Lorenz cycle plot saved to {figure_path}")
