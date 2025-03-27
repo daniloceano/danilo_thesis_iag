@@ -4,7 +4,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 # Função para filtrar os track_ids com base no limiar da magnitude das PCs
-def get_track_ids_with_eof(df, eof_column, threshold=5):
+def get_track_ids_with_eof(df, eof_column, threshold=2):
     """
     Filtra os sistemas (track_id) associados ao EOF dominante, com base na magnitude das PCs.
     
@@ -230,8 +230,8 @@ for col in ['PC1', 'PC2', 'PC3', 'PC4', 'PC5', 'PC6', 'PC7', 'PC8']:
 # test_thresholds_and_plot(merged_df, thresholds)
 
 # Obter o DataFrame com as PCs usando o limiar = 5
-track_df_threshold_5_q10 = get_track_ids_with_eof(merged_df, 'dominant_eof_q10', threshold=5)
-track_df_threshold_5_q90 = get_track_ids_with_eof(merged_df, 'dominant_eof_q90', threshold=5)
+track_df_threshold_5_q10 = get_track_ids_with_eof(merged_df, 'dominant_eof_q10', threshold=2)
+track_df_threshold_5_q90 = get_track_ids_with_eof(merged_df, 'dominant_eof_q90', threshold=2)
 
 # Exibir os DataFrames resultantes para o limiar 5
 print("Track IDs com EOF_q10 e PCs para limiar 5:")
