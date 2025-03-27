@@ -3,39 +3,6 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
 
-def get_track_ids_with_eof(df, eof_column, threshold=3):
-    track_info = []
-
-    # Loop para cada EOF (1, 2, 3, 4)
-    for eof in range(1, 5):
-        # Filtrar os dados para o EOF dominante
-        filtered_df = df[df[eof_column] == eof]
-        
-        # Comparar as magnitudes das PCs, selecionando aquelas que são pelo menos 5x maiores que as demais
-        for track_id in filtered_df['track_id'].unique():
-            track_data = filtered_df[filtered_df['track_id'] == track_id]
-            pcs_values = track_data[['PC1', 'PC2', 'PC3', 'PC4']].values.flatten()
-            
-            # Calcular as magnitudes das PCs
-            pcs_magnitudes = np.abs(pcs_values)
-            max_pc_value = np.max(pcs_magnitudes)
-            other_values = np.delete(pcs_magnitudes, np.argmax(pcs_magnitudes))  # Remover o valor máximo das comparações
-            
-            # Verificar se a magnitude da PC dominante é pelo menos x maior que as outras
-            if np.all(max_pc_value >= threshold * other_values):
-                track_info.append({
-                    'track_id': track_id,
-                    'dominant_eof': eof,
-                    'PC1': pcs_values[0],
-                    'PC2': pcs_values[1],
-                    'PC3': pcs_values[2],
-                    'PC4': pcs_values[3]
-                })
-    
-    # Converter a lista para um DataFrame
-    track_df = pd.DataFrame(track_info)
-    return track_df
-
 # Caminhos para os arquivos
 PATH = '../../Programs_and_scripts/energetic_patterns_cyclones_south_atlantic'
 pcs_q10_path = f'{PATH}/csv_eofs_energetics_with_track/Total/pcs_with_dominant_eof_q10.csv'
@@ -75,11 +42,6 @@ pc_colors = {
     'PC3': '#B55D60',  # Vermelho
     'PC4': '#5F9E6E'   # Verde
 }
-
-# Obter o dataframe com os track_ids e os valores das PCs associadas a cada EOF dominante
-track_df_q10 = get_track_ids_with_eof(merged_df, 'dominant_eof_q10', threshold=5)
-track_df_q90 = get_track_ids_with_eof(merged_df, 'dominant_eof_q90', threshold=5)
-
 
 output_dir = 'figures/eof_statistics_comparison_q10_q90'
 
