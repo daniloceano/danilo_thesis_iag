@@ -6,7 +6,7 @@
 #    By: daniloceano <danilo.oceano@gmail.com>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/03 23:31:13 by daniloceano       #+#    #+#              #
-#    Updated: 2024/09/28 22:07:16 by daniloceano      ###   ########.fr        #
+#    Updated: 2025/06/30 18:28:09 by daniloceano      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -84,30 +84,59 @@ def plot_boxes(ax, data, std_data_phase, normalized_data, positions, size, plot_
         )
         ax.add_patch(square)
 
-        # Value text in the specified color
+        # Define the term and value parts
+        term_text = f"{term}"  # This will always be black
+        value_text = f"{term_value:.2f}\n± {term_std:.2f}"  # Color based on term value
+
+        # Set color for the value text based on the value sign
+        value_text_color = "#386641"  # Green for positive values
+        if term_value < 0:
+            value_text_color = "#ae2012"  # Red for negative values
+
+        # Now, plot the term with black color for the term name and the conditional color for the value
         ax.text(
             pos[0],
-            pos[1],
-            f"{term_value:.2f}\n± {term_std:.2f}",
+            pos[1] + 0.07,
+            term_text,
             ha="center",
             va="center",
             fontsize=16,
-            color=value_text_color,
+            color="black",  # Always black for the term name
+            fontweight="bold",
+        )
+
+        # Plot the value with the appropriate color
+        ax.text(
+            pos[0],
+            pos[1] - 0.05,  # Slightly adjust position for the value text to not overlap
+            value_text,
+            ha="center",
+            va="center",
+            fontsize=16,
+            color=value_text_color,  # Conditional color for the value
             fontweight="bold",
         )
 
 def plot_term_text_and_value_with_std(ax, start, end, term, term_value, std_value, offset=(0, 0), plot_example=False):
-    # Determine text color based on term value
-    text_color = "#386641"
-    if term_value < 0:
-        text_color = "#ae2012"
+    # Define term name and value text parts
+    term_text = f"{term}"  # Always black for the term name
+    if 'G' in term or 'R' in term:
+        value_text = f"{term_value:.2f} ± {std_value:.2f}"  # Value with standard deviation
+    else:
+        value_text = f"{term_value:.2f}\n± {std_value:.2f}"  # Value with standard deviation
 
+    # Determine text color based on the term value
+    value_text_color = "#386641"  # Green for positive values
+    if term_value < 0:
+        value_text_color = "#ae2012"  # Red for negative values
+
+    # Midpoint for positioning
     mid_point = (
         (start[0] + end[0]) / 2 + offset[0],
         (start[1] + end[1]) / 2 + offset[1],
     )
 
-    # Adjust offset for some terms
+    # Adjust offsets for specific terms to avoid overlap
     if term in ["Ca", "BAz", "BAe"]:
         offset_x = -0.05
     elif term in ["Ck", "BKz", "BKe"]:
@@ -116,30 +145,48 @@ def plot_term_text_and_value_with_std(ax, start, end, term, term_value, std_valu
         offset_x = 0
 
     if term == "Ce":
-        offset_y = -0.05
+        offset_y = -0.07
     elif term == "Cz":
-        offset_y = 0.05
+        offset_y = 0.01
     else:
         offset_y = 0
+
+    if term not in ["Gz", "RKz", "Ge", "RKe"]:
+        term_text_offset_y = 0.11
+    elif term in ["Gz", "RKz"]:
+        term_text_offset_y = 0.07
+    else:
+        term_text_offset_y = - 0.07
 
     x_pos = mid_point[0] + offset_x
     y_pos = mid_point[1] + offset_y
 
-    if 'R' in term or 'G' in term:
-        text = f"{term_value:.2f} ± {std_value:.2f}"
-    else:
-        text = f"{term_value:.2f}\n± {std_value:.2f}"
-
+    # Plot the term name in black
     ax.text(
         x_pos,
-        y_pos,
-        text,
+        y_pos + term_text_offset_y,
+        term_text,
         ha="center",
         va="center",
-        color=text_color,
+        color="black",  # Always black for the term
         fontsize=16,
         fontweight="bold",
     )
+
+
+
+    # Plot the value with the determined color
+    ax.text(
+        x_pos,
+        y_pos,  # Adjust the position slightly to avoid overlap
+        value_text,
+        ha="center",
+        va="center",
+        color=value_text_color,  # Color based on the value
+        fontsize=16,
+        fontweight="bold",
+    )
+
 
 def plot_term_arrows_and_text_with_std(ax, size, term, data, std_data_phase, positions, plot_example=False):
     term_value = data[term]
