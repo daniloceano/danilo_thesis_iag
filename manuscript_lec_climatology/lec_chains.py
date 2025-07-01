@@ -6,7 +6,7 @@
 #    By: daniloceano <danilo.oceano@gmail.com>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/03 23:31:13 by daniloceano       #+#    #+#              #
-#    Updated: 2025/07/01 09:31:22 by daniloceano      ###   ########.fr        #
+#    Updated: 2025/07/01 09:40:23 by daniloceano      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -94,31 +94,23 @@ def plot_boxes(ax, data, normalized_data, positions, size, plot_example=False):
         )
         ax.add_patch(square)
 
-        # Term text in bold black
-        if plot_example:
-            ax.text(
-                pos[0],
-                pos[1],
-                f"{term}",
-                ha="center",
-                va="center",
-                fontsize=16,
-                color="k",
-                fontweight="bold",
-            )
+        # Convert term to fraction format for time derivatives
+        if "∂" in term and "t" in term:  # Check if the term is a time derivative
+            term_text = f"$\\frac{{∂{term.split('∂')[1].split('/')[0]}}}{{∂t}}$"  # Fractions for time derivatives
+        else:
+            term_text = term  # Regular term
 
         # Value text in the specified color
-        else:
-            ax.text(
-                pos[0],
-                pos[1],
-                f"{term_value:.2f}",
-                ha="center",
-                va="center",
-                fontsize=16,
-                color=value_text_color,
-                fontweight="bold",
-            )
+        ax.text(
+            pos[0],
+            pos[1],
+            term_text,
+            ha="center",
+            va="center",
+            fontsize=30,
+            fontweight="bold",
+            color='k',
+        )
 
 
 def plot_arrow(ax, start, end, term_value, color="#5C5850"):
