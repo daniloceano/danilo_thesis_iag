@@ -6,7 +6,7 @@
 #    By: daniloceano <danilo.oceano@gmail.com>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/03 23:31:13 by daniloceano       #+#    #+#              #
-#    Updated: 2025/07/01 07:48:02 by daniloceano      ###   ########.fr        #
+#    Updated: 2025/07/01 19:25:59 by daniloceano      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -138,14 +138,14 @@ def plot_term_text_and_value_with_std(ax, start, end, term, term_value, std_valu
 
     # Adjust offsets for specific terms to avoid overlap
     if term in ["Ca", "BAz", "BAe"]:
-        offset_x = -0.05
+        offset_x = -0.12
     elif term in ["Ck", "BKz", "BKe"]:
-        offset_x = 0.05
+        offset_x = 0.12
     else:
         offset_x = 0
 
     if term == "Ce":
-        offset_y = -0.07
+        offset_y = -0.09
     elif term == "Cz":
         offset_y = 0.01
     else:
