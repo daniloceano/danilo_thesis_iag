@@ -263,14 +263,16 @@ def plot_arrow(ax, start, end, term_value, color="#5C5850"):
     """Draws an arrow on the given axes from start to end point."""
 
     # Determine arrow size based on term value
-    if np.abs(term_value) < 1:
-        size = 3 + np.abs(term_value)
-    elif np.abs(term_value) < 5:
-        size = 3 + np.abs(term_value)
-    elif np.abs(term_value) < 10:
-        size = 3 + np.abs(term_value)
-    else:
-        size = 15 + np.abs(term_value) * 0.1
+    # if np.abs(term_value) < 0.1:
+    #     size = 1 + np.abs(term_value)
+    # elif np.abs(term_value) < 0.3:
+    #     size = 2 * np.abs(term_value)
+    # elif np.abs(term_value) < 0.5:
+    #     size = 3 * np.abs(term_value)
+    # else:
+    #     size = 4 * np.abs(term_value)
+
+    size = 15 * np.abs(term_value)
 
     ax.annotate(
         "",
