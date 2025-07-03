@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 PATH = "../../Programs_and_scripts/energetic_patterns_cyclones_south_atlantic/"
 results_path = f'{PATH}/csv_database_energy_by_periods'
-eofs_path = f'{PATH}/csv_eofs_energetics'
+eofs_path = f'{PATH}/csv_eofs_energetics_with_track'
 figures_directory = 'figures/LEC_eof/'
 
 phases = ['incipient', 'intensification', 'mature', 'decay']
@@ -364,14 +364,13 @@ for eof in range(0, 4):  # Para cada EOF, onde o índice é único
         # Carregue os dados de EOF para a fase
         phase_directory = os.path.join(eofs_path, phase)
         eof_file_phase = os.path.join(phase_directory, f'eofs.csv')
-        df = pd.read_csv(eof_file_phase, header=None)
+        df = pd.read_csv(eof_file_phase, header=0)
 
         # Ajuste os nomes das colunas
-        df.columns = columns
         df.columns = [col if '∂' not in col else '∂' + col.split('∂')[1].split('/')[0] + '/∂t' for col in df.columns]
 
         # Carregar a variância explicada
-        explained_variance = pd.read_csv(os.path.join(phase_directory, 'variance_fraction.csv'), header=None)
+        explained_variance = pd.read_csv(os.path.join(phase_directory, 'variance_fraction.csv'), header=0)
         explained_variances = pd.concat([explained_variances, explained_variance * 100], axis=1)
 
         # Obtenha os dados para o EOF atual
