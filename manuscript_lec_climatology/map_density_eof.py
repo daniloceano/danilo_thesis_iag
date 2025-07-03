@@ -6,7 +6,7 @@
 #    By: daniloceano <danilo.oceano@gmail.com>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/08/08 20:33:08 by Danilo            #+#    #+#              #
-#    Updated: 2025/01/31 14:40:32 by daniloceano      ###   ########.fr        #
+#    Updated: 2025/07/02 21:22:23 by daniloceano      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,6 +21,13 @@ import os
 from glob import glob
 
 labels = ['A', 'B', 'C', 'D']
+
+# Regiões de gênese
+regions = {
+    "SE-BR": [(-52, -38, -37, -23)],
+    "LA-PLATA": [(-69, -38, -52, -23)],
+    "ARG": [(-70, -55, -50, -39)],
+}
 
 def gridlines(ax):
     gl = ax.gridlines(draw_labels=True, zorder=100, linestyle='dashed', alpha=0.5,
@@ -84,6 +91,15 @@ def plot_density(ax, density, eof, suffix, label):
 
     return cf
 
+def add_regions(ax):
+    for name, bounds in regions.items():
+        min_lon, min_lat, max_lon, max_lat = bounds[0]
+        ax.plot(
+            [min_lon, max_lon, max_lon, min_lon, min_lon],
+            [min_lat, min_lat, max_lat, max_lat, min_lat],
+            color='black', linewidth=1.5, transform=ccrs.PlateCarree(), linestyle='--'
+        )
+
 def generate_density_panel(eofs_path, output_directory, suffix):
     eof_files = sorted(glob(os.path.join(eofs_path, "SAt_track_density_eof_*.nc")))
 
@@ -100,6 +116,9 @@ def generate_density_panel(eofs_path, output_directory, suffix):
         row, col = divmod(i, 2)  # Determina a posição no painel
         cf = plot_density(axes[row, col], density, eof=eof_number, suffix=suffix, label=labels[i])
 
+        # Adicionar regiões
+        add_regions(axes[row, col])
+
         # Criar colorbar individual para cada subplot logo abaixo dele
         cbar_ax = fig.add_axes([0.12 + col * 0.47, 0.55 + row * -0.27, 0.3, 0.015])  # Posicionamento dinâmico
         cbar = plt.colorbar(cf, cax=cbar_ax, format='%g', orientation='horizontal')
@@ -113,7 +132,7 @@ def generate_density_panel(eofs_path, output_directory, suffix):
     print(f'Density panel saved in {panel_path}')
 
 if __name__ == "__main__":
-    suffix = "q10"
+    suffix = "q90"
 
     eofs_path = f"../../Programs_and_scripts/energetic_patterns_cyclones_south_atlantic/csv_eofs_energetics_with_track/Total/track_density_{suffix}"
     output_directory = f"figures/eof_density_maps"
