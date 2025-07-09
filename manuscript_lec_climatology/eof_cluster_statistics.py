@@ -132,7 +132,7 @@ axes[1, 1].set_xlabel('Cluster', fontsize=ylabel_fontsize)
 axes[1, 1].set_ylabel('Number of Systems', fontsize=ylabel_fontsize)
 axes[1, 1].tick_params(axis='x', labelsize=tick_labelsize)
 axes[1, 1].tick_params(axis='y', labelsize=tick_labelsize)
-axes[1, 1].legend(title=False, fontsize=legend_fontsize, title_fontsize=legend_fontsize)
+axes[1, 1].legend(title=False, fontsize=legend_fontsize, title_fontsize=legend_fontsize, ncol=2)
 
 # Ajustar layout e salvar figura principal
 plt.tight_layout()
@@ -186,4 +186,3 @@ for i, cluster in enumerate(cluster_list):
 # Ajustar layout e salvar figura
 plt.tight_layout()
 plt.savefig(f"{output_dir}/genesis_seasonality_panel.png", dpi=300)
-plt.show()

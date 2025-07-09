@@ -19,8 +19,9 @@ track_path = f'{PATH}/tracks_SAt_filtered/tracks_SAt_filtered_with_periods.csv'
 tracks = pd.read_csv(track_path)
 
 # Extrair sistemas intensos
+q90 = tracks.groupby('track_id')['vor42'].max().quantile(0.90)
 q99 = tracks['vor42'].quantile(0.99)
-tracks_intense = tracks[tracks['vor42'] >= q99]
+tracks_intense = tracks[tracks['vor42'] >= q90]
 
 # Carregar os dados das PCs
 pcs_df = pd.read_csv(pcs_path)
