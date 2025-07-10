@@ -76,8 +76,9 @@ genesis_counts = genesis_counts.div(genesis_counts.sum(axis=1), axis=0) * 100
 # Criar DataFrame com a contagem de ciclones por estação e região de gênese para cada cluster
 seasonal_genesis_counts = clusters_seasonality_df.groupby(['cluster', 'region', 'season']).size().unstack(fill_value=0)
 
-# Normalizar os valores para que cada cluster tenha 100% de distribuição entre as estações dentro de cada região de gênese
-seasonal_genesis_counts = seasonal_genesis_counts.div(seasonal_genesis_counts.sum(axis=1), axis=0) * 100
+# Corrigir: porcentagem em relação ao total de sistemas por cluster
+cluster_totals = clusters_seasonality_df.groupby('cluster').size()
+seasonal_genesis_counts = seasonal_genesis_counts.div(cluster_totals, axis=0) * 100
 
 # Intensidade máxima (vor42) dos sistemas por cluster
 intensity_df = filtered_tracks_df.groupby('track_id')['vor42'].max().reset_index()
@@ -94,6 +95,13 @@ tracks_df['dvor_dt'] = tracks_df['dvor_dt'] / 3600  # 1 hora = 3600 segundos
 # Filtrar apenas os track_ids contidos em clusters_df
 growth_rate_intense_df = growth_rate_df[growth_rate_df['track_id'].isin(clusters_df['track_id'])]
 growth_rate_intense_df = growth_rate_intense_df.merge(clusters_df[['track_id', 'cluster']], on='track_id', how='left')
+
+# Calcular duração média por cluster
+clusters_duration_df = filtered_tracks_df.groupby('track_id').agg({'date': ['min', 'max']}).reset_index()
+clusters_duration_df.columns = ['track_id', 'start_date', 'end_date']
+clusters_duration_df['duration'] = (clusters_duration_df['end_date'] - clusters_duration_df['start_date']).dt.days
+clusters_duration_df = clusters_duration_df.merge(clusters_df[['track_id', 'cluster']], on='track_id', how='left')
+mean_duration = clusters_duration_df.groupby('cluster')['duration'].mean().reset_index()
 
 # Criar figura com 2x2 subplots (excluindo a taxa de crescimento médio, que será feita separadamente)
 fig, axes = plt.subplots(2, 2, figsize=(18, 12))
@@ -121,16 +129,16 @@ seasonal_counts.plot(kind='bar', ax=axes[1, 0], color=season_colors)
 axes[1, 0].set_title("(C) Seasonality of Systems", fontsize=title_fontsize, fontweight='bold')
 axes[1, 0].set_xlabel('Cluster', fontsize=ylabel_fontsize)
 axes[1, 0].set_ylabel('Frequency of Occurrence (%)', fontsize=ylabel_fontsize)
-axes[1, 0].tick_params(axis='x', labelsize=tick_labelsize)
+axes[1, 0].tick_params(axis='x', labelsize=tick_labelsize, rotation=0)
 axes[1, 0].tick_params(axis='y', labelsize=tick_labelsize)
 axes[1, 0].legend(title=False, fontsize=legend_fontsize, title_fontsize=legend_fontsize, ncol=2)
 
 # 4) Contagem de sistemas por região de gênese (multi-barras)
 genesis_counts.plot(kind='bar', ax=axes[1, 1], color=[region_colors.get(region, 'gray') for region in genesis_counts.columns])
-axes[1, 1].set_title("(D) Genesis Region Count", fontsize=title_fontsize, fontweight='bold')
+axes[1, 1].set_title("(D) Genesis Region Distribution", fontsize=title_fontsize, fontweight='bold')
 axes[1, 1].set_xlabel('Cluster', fontsize=ylabel_fontsize)
-axes[1, 1].set_ylabel('Number of Systems', fontsize=ylabel_fontsize)
-axes[1, 1].tick_params(axis='x', labelsize=tick_labelsize)
+axes[1, 1].set_ylabel('Frequency by Genesis Region', fontsize=ylabel_fontsize)
+axes[1, 1].tick_params(axis='x', labelsize=tick_labelsize, rotation=0)
 axes[1, 1].tick_params(axis='y', labelsize=tick_labelsize)
 axes[1, 1].legend(title=False, fontsize=legend_fontsize, title_fontsize=legend_fontsize, ncol=2)
 
@@ -163,26 +171,45 @@ all_clusters_counts.plot(kind='bar', ax=axes[0, 0], color=season_colors)
 
 axes[0, 0].set_title("(A) Genesis Seasonality - All Clusters", fontsize=title_fontsize, fontweight='bold')
 axes[0, 0].set_xlabel('Genesis Region', fontsize=ylabel_fontsize)
-axes[0, 0].set_ylabel('Total Number of Systems', fontsize=ylabel_fontsize)
+axes[0, 0].set_ylabel('Frequency of Occurrence (%)', fontsize=ylabel_fontsize)
 axes[0, 0].tick_params(axis='x', labelsize=tick_labelsize, rotation=0)
 axes[0, 0].tick_params(axis='y', labelsize=tick_labelsize)
 axes[0, 0].legend(title="Season", fontsize=legend_fontsize, title_fontsize=legend_fontsize)
 
 # 2️⃣ **Painéis individuais para cada cluster**
-cluster_list = sorted(seasonal_genesis_counts.index.get_level_values('cluster').unique())
+cluster_list = sorted(seasonal_counts.index.get_level_values('cluster').unique())
 
-for i, cluster in enumerate(cluster_list):
+for i, (cluster, label) in enumerate(zip(cluster_list, ['(B)', '(C)', '(D)', '(E)'])):
     row, col = divmod(i + 1, 3)  # Ajusta a posição dos painéis
-    if cluster in seasonal_genesis_counts.index:
-        seasonal_genesis_counts.loc[cluster].plot(kind='bar', ax=axes[row, col], color=season_colors)
+    if cluster in seasonal_counts.index:
+        # Plotar a sazonalidade do cluster específico
+        seasonal_genesis_counts.loc[cluster].plot(
+            kind='bar', ax=axes[row, col], color=season_colors, legend=False
+        )
 
-    axes[row, col].set_title(f"(B) Genesis Seasonality - Cluster {cluster}", fontsize=title_fontsize, fontweight='bold')
+    axes[row, col].set_title(f"{label} Cluster {cluster}", fontsize=title_fontsize, fontweight='bold')
     axes[row, col].set_xlabel('Genesis Region', fontsize=ylabel_fontsize)
-    axes[row, col].set_ylabel('Total Number of Systems', fontsize=ylabel_fontsize)
+    axes[row, col].set_ylabel('Frequency of Occurrence (%)', fontsize=ylabel_fontsize)
     axes[row, col].tick_params(axis='x', labelsize=tick_labelsize, rotation=0)
     axes[row, col].tick_params(axis='y', labelsize=tick_labelsize)
+    # Arredondar os valores do eixo y para facilitar a leitura
+    axes[row, col].set_yticklabels([f"{int(y)}%" for y in axes[row, col].get_yticks()], fontsize=tick_labelsize)
+    # Remover legendas duplicadas
     axes[row, col].legend().set_visible(False)  # Remover legendas duplicadas
 
 # Ajustar layout e salvar figura
 plt.tight_layout()
 plt.savefig(f"{output_dir}/genesis_seasonality_panel.png", dpi=300)
+
+# Figura com a duração média por cluster
+fig_duration, ax_duration = plt.subplots(figsize=(10, 6))
+sns.boxplot(clusters_duration_df, y=clusters_duration_df['duration'], ax=ax_duration, palette='tab20', hue='cluster')
+ax_duration.set_title("(E) Average Duration of Systems", fontsize=title_fontsize, fontweight='bold')
+ax_duration.set_xlabel('Cluster', fontsize=ylabel_fontsize)
+ax_duration.set_ylabel('Average Duration (days)', fontsize=ylabel_fontsize)
+ax_duration.tick_params(axis='x', labelsize=tick_labelsize)
+ax_duration.tick_params(axis='y', labelsize=tick_labelsize)
+
+# Salvar figura da duração média por cluster
+plt.tight_layout()
+plt.savefig(f"{output_dir}/duration.png", dpi=300)

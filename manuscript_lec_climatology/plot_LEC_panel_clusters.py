@@ -9,7 +9,6 @@ image_files = [
     f'{path}/LEC_Cluster 2.png',
     f'{path}/LEC_Cluster 3.png',
     f'{path}/LEC_Cluster 4.png',
-    # f'{path}/LEC_Cluster 5.png',
 ]
 
 # Nomes das fases
@@ -19,10 +18,12 @@ label_titles = ['(A)', '(B)', '(C)', '(D)', '(E)', '(F)']
 images = [Image.open(img_file) for img_file in image_files]
 
 # Criar a figura
-fig, axes = plt.subplots(2, 3, figsize=(12, 10))
+fig, axes = plt.subplots(2, 3, figsize=(15, 10))
 
 # Loop para preencher a grade com as imagens
 for ax, img, label in zip(axes.flatten(), images, label_titles):
+    print(f'Plotting {label}...')  # Log para saber qual imagem está sendo processada
+    print('Axes:', ax)
     # plot apenas se a imagem não for None
     if img is not None:
         ax.imshow(img)  # Mostrar a imagem
@@ -42,6 +43,10 @@ for ax, img, label in zip(axes.flatten(), images, label_titles):
     else:
         fig.delaxes(ax)  # Remove o subplot se não houver imagem
 
+# Remover os eixos das imagens que não foram usadas
+for ax in axes.flatten()[len(images):]:
+    ax.axis('off')
+
 # Ajustar o layout
-plt.tight_layout(h_pad=-10)
+plt.tight_layout()
 plt.savefig('figures/eof_clusters_intense/panel_LEC_clusters.png')

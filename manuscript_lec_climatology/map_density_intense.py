@@ -36,34 +36,34 @@ def generate_density_panel(cluster_density_path, output_directory):
     os.makedirs(output_directory, exist_ok=True)
 
     # Corrige erro de 'projection' para subplots quando axes é 2D
-    fig, axes = plt.subplots(3, 2, figsize=(10, 8),
+    fig, axes = plt.subplots(2, 2, figsize=(10, 8),
                             subplot_kw=dict(projection=ccrs.PlateCarree()))
     axes = np.array(axes)  # Garante que axes é um array numpy para indexação
 
     # Encontrar o valor máximo global de densidade
-    max_density = 0
     densities = []
     for cluster_file in cluster_files:
         cluster_number = os.path.basename(cluster_file).split('_')[-1].split('.')[0]
         ds = xr.open_dataset(cluster_file)
         density = ds[f"Cluster {int(cluster_number)}"]
         densities.append(density)
-        max_density = max(max_density, density.max().item())
         ds.close()
 
-    # Ajustar os limites do colorbar para ir de 0.5 em 0.5 até 4.5, com extend para o máximo
-    levels = np.arange(0.5, 5.0, 0.5)
     colors_linear = ['#AFC4DA', '#4471B2', '#B1DFA3', '#EFF9A6',
-                     '#FEEC9F', '#FDB567', '#F06744', '#C1274A']
-    cmap = mcolors.LinearSegmentedColormap.from_list("", colors_linear)
-    norm = mpl.colors.BoundaryNorm(levels, cmap.N)
+            '#FEEC9F', '#FDB567', '#F06744', '#C1274A']
 
-    cbar_added = False
+
     for i, (cluster_file, density) in enumerate(zip(cluster_files, densities)):
+        max_density = density.max().values
+        levels = np.linspace(0.1, max_density, 9)
+        levels = np.round(levels, 1)
+        cmap = mcolors.LinearSegmentedColormap.from_list("", colors_linear)
+        norm = mpl.colors.BoundaryNorm(levels, cmap.N)
+
         cluster_number = int(os.path.basename(cluster_file).split('_')[-1].split('.')[0])
         row, col = divmod(i, 2)  # Determina a posição no painel
         ax = axes[row, col]
-        ax.set_extent([-90, 100, -15, -90], crs=ccrs.PlateCarree())
+        ax.set_extent([-90, 110, -15, -90], crs=ccrs.PlateCarree())
         cf = ax.contourf(density.lon, density.lat, density, cmap=cmap, levels=levels, norm=norm, extend='max', transform=ccrs.PlateCarree())
         ax.contour(density.lon, density.lat, density, levels=levels, norm=norm, colors='#383838',
                    linewidths=0.35, linestyles='dashed', transform=ccrs.PlateCarree())
@@ -83,20 +83,11 @@ def generate_density_panel(cluster_density_path, output_directory):
                 color='black', linewidth=1.5, transform=ccrs.PlateCarree(), linestyle='--'
             )
 
-        # Adicionar colorbar única abaixo do plot do cluster 4 sem make_axes_locatable
-        if not cbar_added and cluster_number == 4:
-            pos = ax.get_position()
-            cbar_ax = fig.add_axes([pos.x0 + 0.02, pos.y0 - 0.07, pos.width, 0.025])
-            cbar = fig.colorbar(cf, cax=cbar_ax, orientation='horizontal', extend='max')
-            cbar.ax.tick_params(labelsize=10)
-            cbar_added = True
+        # Adicionar colorbar horizontal abaixo de cada subplot
+        cbar = fig.colorbar(cf, orientation='horizontal', extend='max', pad=0.08)
+        cbar.ax.tick_params(labelsize=10)
 
-    # Remover subplot extra caso tenha menos de 6 clusters
-    if len(cluster_files) < 6:
-        fig.delaxes(axes[-1, -1])  # Remove o último subplot vazio
-
-    plt.subplots_adjust(bottom=0.1, top=0.95, left=0.05, right=0.95, hspace=-0.2, wspace=0.15)
-
+    plt.tight_layout(h_pad=-12)
     panel_path = os.path.join(output_directory, "density_panel.png")
     plt.savefig(panel_path, bbox_inches='tight', dpi=300)
     plt.close()
