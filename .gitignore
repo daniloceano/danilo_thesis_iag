@@ -168,3 +168,5 @@ presentation/data/19820697.nc
 manuscript_lec_climatology/launch.json
 premio_destque_usp/919178CC-639A-464C-889B-4793651A93F3.mov
 premio_destque_usp/Video Premio Teses USP_Danilo.mp4
+manuscript_lec_climatology/tests_LEC_domain_size/*.nc
+manuscript_lec_climatology/tests_LEC_domain_size/*_ERA5_track_*
